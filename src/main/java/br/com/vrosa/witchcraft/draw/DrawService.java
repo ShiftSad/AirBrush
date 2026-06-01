@@ -17,8 +17,10 @@ public final class DrawService {
     private static final double MIN_SPACING = 0.2;
     private static final double MIN_PARTIAL = 1.0e-3;
     private static final int SMOOTH_ITERATIONS = 2;
+    private static final int DEFAULT_COLOR = 0xFFFFFF;
 
     private final Map<UUID, DrawSession> sessions = new HashMap<>();
+    private final Map<UUID, Integer> pencil = new HashMap<>();
     private final Raycaster raycaster;
 
     public DrawService(@NotNull Raycaster raycaster) {
@@ -27,6 +29,14 @@ public final class DrawService {
 
     public boolean isActive(@NotNull Player player) {
         return sessions.containsKey(player.getUniqueId());
+    }
+
+    public void setColor(@NotNull Player player, int rgb) {
+        pencil.put(player.getUniqueId(), rgb & 0xFFFFFF);
+    }
+
+    public int colorOf(@NotNull Player player) {
+        return pencil.getOrDefault(player.getUniqueId(), DEFAULT_COLOR);
     }
 
     public void tick(@NotNull Player player) {
@@ -59,7 +69,7 @@ public final class DrawService {
         if (!last.position().getWorld().equals(pointer.position().getWorld())) return;
 
         if (last.position().distanceSquared(pointer.position()) >= MIN_SPACING * MIN_SPACING) {
-            final var seg = SegmentRenderer.spawn(player.getWorld(), last.position(), false);
+            final var seg = SegmentRenderer.spawn(player.getWorld(), last.position(), false, s.rgb);
             SegmentRenderer.orient(seg, last, pointer.position());
             s.preview.add(seg);
             s.samples.add(pointer.copy());
@@ -69,12 +79,12 @@ public final class DrawService {
         }
 
         if (s.rubberband == null || !s.rubberband.isValid()) {
-            s.rubberband = SegmentRenderer.spawn(player.getWorld(), last.position(), false);
+            s.rubberband = SegmentRenderer.spawn(player.getWorld(), last.position(), false, s.rgb);
         }
         SegmentRenderer.orient(s.rubberband, last, pointer.position());
     }
 
-    void handleClick(@NotNull Player player, boolean right) {
+    void handlePencil(@NotNull Player player, boolean right) {
         final var pointer = raycaster.current(player);
         final var s = sessions.get(player.getUniqueId());
 
@@ -98,7 +108,7 @@ public final class DrawService {
     }
 
     private void startFreehand(@NotNull Player player) {
-        sessions.put(player.getUniqueId(), new DrawSession(DrawMode.FREEHAND));
+        sessions.put(player.getUniqueId(), new DrawSession(DrawMode.FREEHAND, colorOf(player)));
     }
 
     private void finishFreehand(@NotNull Player player, @NotNull DrawSession s, RayHit pointer) {
@@ -112,13 +122,13 @@ public final class DrawService {
         discard(s);
         sessions.remove(player.getUniqueId());
         if (s.samples.size() < 2) return;
-        renderStroke(Curve.chaikin(s.samples, SMOOTH_ITERATIONS));
+        renderStroke(Curve.chaikin(s.samples, SMOOTH_ITERATIONS), s.rgb);
     }
 
     private void startStraight(@NotNull Player player, @NotNull RayHit pointer) {
-        final var s = new DrawSession(DrawMode.STRAIGHT);
+        final var s = new DrawSession(DrawMode.STRAIGHT, colorOf(player));
         s.anchor = pointer.copy();
-        s.rubberband = SegmentRenderer.spawn(player.getWorld(), s.anchor.position(), false);
+        s.rubberband = SegmentRenderer.spawn(player.getWorld(), s.anchor.position(), false, s.rgb);
         sessions.put(player.getUniqueId(), s);
     }
 
@@ -126,7 +136,7 @@ public final class DrawService {
         SegmentRenderer.orient(s.rubberband, s.anchor, pointer.position());
         s.rubberband.setPersistent(true);
         s.anchor = pointer.copy();
-        s.rubberband = SegmentRenderer.spawn(s.anchor.position().getWorld(), s.anchor.position(), false);
+        s.rubberband = SegmentRenderer.spawn(s.anchor.position().getWorld(), s.anchor.position(), false, s.rgb);
     }
 
     private void finishStraight(@NotNull Player player, @NotNull DrawSession s) {
@@ -139,14 +149,15 @@ public final class DrawService {
         sessions.remove(player.getUniqueId());
     }
 
-    private void renderStroke(@NotNull List<RayHit> pts) {
+    private void renderStroke(@NotNull List<RayHit> pts, int rgb) {
         for (int i = 0; i < pts.size() - 1; i++) {
-            SegmentRenderer.drawPermanent(pts.get(i), pts.get(i + 1).position());
+            SegmentRenderer.drawPermanent(pts.get(i), pts.get(i + 1).position(), rgb);
         }
     }
 
     void remove(@NotNull Player player) {
         discard(sessions.remove(player.getUniqueId()));
+        pencil.remove(player.getUniqueId());
         raycaster.clear(player);
     }
 

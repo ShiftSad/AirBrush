@@ -1,5 +1,6 @@
 package br.com.vrosa.witchcraft.raycast;
 
+import br.com.vrosa.witchcraft.keys.ItemDefinition;
 import io.papermc.paper.raytracing.BlockCollisionMode;
 import io.papermc.paper.raytracing.RayTraceTarget;
 import org.bukkit.FluidCollisionMode;
@@ -28,7 +29,7 @@ public final class Raycaster {
     }
 
     public void tick(@NotNull Player player, boolean showCursor) {
-        if (player.getInventory().getItemInMainHand().getType() != Material.CARROT_ON_A_STICK) {
+        if (!ItemDefinition.hasAnyType(player.getInventory().getItemInMainHand())) {
             cache.remove(player);
             return;
         }

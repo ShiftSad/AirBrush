@@ -1,6 +1,10 @@
 package br.com.vrosa.witchcraft.render;
 
 import br.com.vrosa.witchcraft.raycast.RayHit;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.CustomModelData;
+import net.kyori.adventure.key.Key;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -20,15 +24,24 @@ public final class SegmentRenderer {
     private static final float SURFACE_OFFSET = 0.005f;
     private static final float EPSILON = 1.0e-4f;
 
-    private static final ItemStack MATERIAL = new ItemStack(Material.WHITE_CONCRETE);
+    private static final Key MODEL = Key.key("witchcraft", "drawing_segment");
 
     private SegmentRenderer() {}
 
-    public static @NotNull ItemDisplay spawn(@NotNull World world, @NotNull Location at, boolean persistent) {
+    private static @NotNull ItemStack item(int rgb) {
+        final var item = ItemStack.of(Material.PAPER);
+        item.setData(DataComponentTypes.ITEM_MODEL, MODEL);
+        item.setData(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelData.customModelData()
+                .addColor(Color.fromRGB(rgb & 0xFFFFFF))
+                .build());
+        return item;
+    }
+
+    public static @NotNull ItemDisplay spawn(@NotNull World world, @NotNull Location at, boolean persistent, int rgb) {
         return world.spawn(at, ItemDisplay.class, d -> {
             d.setPersistent(persistent);
             d.setBrightness(new Display.Brightness(15, 15));
-            d.setItemStack(MATERIAL);
+            d.setItemStack(item(rgb));
             d.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.NONE);
             d.setTransformation(empty());
         });
@@ -42,8 +55,8 @@ public final class SegmentRenderer {
         display.setTransformation(empty());
     }
 
-    public static void drawPermanent(@NotNull RayHit from, @NotNull Location to) {
-        final var display = spawn(from.position().getWorld(), from.position(), true);
+    public static void drawPermanent(@NotNull RayHit from, @NotNull Location to, int rgb) {
+        final var display = spawn(from.position().getWorld(), from.position(), true, rgb);
         display.setTransformation(transform(from.position(), to, from.normal()));
     }
 

@@ -2,8 +2,8 @@ name: WitchCraft
 version: '${version}'
 
 main: br.com.vrosa.witchcraft.WitchCraft
-bootstrapper: br.com.vrosa.witchCraft.WitchCraftBootstrap
-loader: br.com.vrosa.witchCraft.WitchCraftLoader
+bootstrapper: br.com.vrosa.witchcraft.WitchCraftBootstrap
+loader: br.com.vrosa.witchcraft.WitchCraftLoader
 api-version: '26.1.2'
 load: POSTWORLD
 

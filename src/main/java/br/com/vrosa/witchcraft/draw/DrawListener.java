@@ -1,6 +1,6 @@
 package br.com.vrosa.witchcraft.draw;
 
-import org.bukkit.Material;
+import br.com.vrosa.witchcraft.keys.ItemDefinition;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -22,7 +22,13 @@ public final class DrawListener implements Listener {
         if (event.getHand() != EquipmentSlot.HAND) return;
 
         final var player = event.getPlayer();
-        if (player.getInventory().getItemInMainHand().getType() != Material.CARROT_ON_A_STICK) return;
+        final var item = event.getItem();
+
+        if (item == null) return;
+        if (!ItemDefinition.hasAnyType(item)) return;
+
+        final var type = ItemDefinition.getType(item);
+        if (type == null) return;
 
         final var action = event.getAction();
         final boolean right = action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK;
@@ -30,7 +36,10 @@ public final class DrawListener implements Listener {
         if (!right && !left) return;
 
         event.setCancelled(true);
-        service.handleClick(player, right);
+
+        if (type == ItemDefinition.PENCIL) {
+            service.handlePencil(player, right);
+        }
     }
 
     @EventHandler
