@@ -1,0 +1,10 @@
+name: WitchCraft
+version: '${version}'
+
+main: br.com.vrosa.witchcraft.paper.WitchCraft
+bootstrapper: br.com.vrosa.witchcraft.paper.WitchCraftBootstrap
+loader: br.com.vrosa.witchcraft.paper.WitchCraftLoader
+api-version: '26.1.2'
+load: POSTWORLD
+
+authors: [ ShiftSad ]

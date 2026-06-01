@@ -6,7 +6,17 @@ paperweight-userdev = "2.0.0-beta.21"
 shadow = "9.4.2"
 run-task = "3.0.2"
 
+adventure = "4.17.0"
+joml = "1.10.8"
+annotations = "26.0.1"
+
+minestom = "2026.05.17c-26.1.1"
+
 [libraries]
+adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
+joml = { module = "org.joml:joml", version.ref = "joml" }
+annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+minestom = { module = "net.minestom:minestom", version.ref = "minestom" }
 
 [plugins]
 paperweight-userdev = { id = "io.papermc.paperweight.userdev", version.ref = "paperweight-userdev" }
