@@ -1,7 +1,7 @@
-package br.com.vrosa.witchCraft.draw;
+package br.com.vrosa.witchcraft.draw;
 
-import br.com.vrosa.witchCraft.raycast.RayHit;
-import org.bukkit.entity.BlockDisplay;
+import br.com.vrosa.witchcraft.raycast.RayHit;
+import org.bukkit.entity.ItemDisplay;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +10,9 @@ final class DrawSession {
 
     final DrawMode mode;
     final List<RayHit> samples = new ArrayList<>();
-    final List<BlockDisplay> preview = new ArrayList<>();
+    final List<ItemDisplay> preview = new ArrayList<>();
     RayHit anchor;
-    BlockDisplay rubberband;
+    ItemDisplay rubberband;
 
     DrawSession(DrawMode mode) {
         this.mode = mode;

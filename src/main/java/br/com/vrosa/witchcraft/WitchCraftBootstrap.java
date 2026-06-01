@@ -1,4 +1,4 @@
-package br.com.vrosa.witchCraft;
+package br.com.vrosa.witchcraft;
 
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap;

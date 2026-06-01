@@ -1,9 +1,9 @@
-package br.com.vrosa.witchCraft.draw;
+package br.com.vrosa.witchcraft.draw;
 
-import br.com.vrosa.witchCraft.raycast.RayHit;
-import br.com.vrosa.witchCraft.raycast.Raycaster;
-import br.com.vrosa.witchCraft.render.Curve;
-import br.com.vrosa.witchCraft.render.SegmentRenderer;
+import br.com.vrosa.witchcraft.raycast.RayHit;
+import br.com.vrosa.witchcraft.raycast.Raycaster;
+import br.com.vrosa.witchcraft.render.Curve;
+import br.com.vrosa.witchcraft.render.SegmentRenderer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,3 +1,3 @@
-package br.com.vrosa.witchCraft.draw;
+package br.com.vrosa.witchcraft.draw;
 
 enum DrawMode { FREEHAND, STRAIGHT }

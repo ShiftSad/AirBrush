@@ -1,8 +1,8 @@
-package br.com.vrosa.witchCraft;
+package br.com.vrosa.witchcraft;
 
-import br.com.vrosa.witchCraft.draw.DrawListener;
-import br.com.vrosa.witchCraft.draw.DrawService;
-import br.com.vrosa.witchCraft.raycast.Raycaster;
+import br.com.vrosa.witchcraft.draw.DrawListener;
+import br.com.vrosa.witchcraft.draw.DrawService;
+import br.com.vrosa.witchcraft.raycast.Raycaster;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

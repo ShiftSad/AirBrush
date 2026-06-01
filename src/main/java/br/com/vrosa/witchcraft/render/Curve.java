@@ -1,6 +1,6 @@
-package br.com.vrosa.witchCraft.render;
+package br.com.vrosa.witchcraft.render;
 
-import br.com.vrosa.witchCraft.raycast.RayHit;
+import br.com.vrosa.witchcraft.raycast.RayHit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;

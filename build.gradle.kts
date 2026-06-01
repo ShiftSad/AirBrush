@@ -15,6 +15,7 @@ dependencies {
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(25)
+    toolchain.vendor = JvmVendorSpec.JETBRAINS
 }
 
 tasks {
@@ -24,7 +25,11 @@ tasks {
 
     runServer {
         minecraftVersion(libs.versions.minecraft.get())
-        jvmArgs("-Xms2G", "-Xmx2G", "-Dcom.mojang.eula.agree=true")
+        jvmArgs(
+            "-Xms2G", "-Xmx2G",
+            "-Dcom.mojang.eula.agree=true",
+            "-XX:+AllowEnhancedClassRedefinition"
+        )
     }
 
     processResources {

@@ -1,4 +1,4 @@
-package br.com.vrosa.witchCraft.raycast;
+package br.com.vrosa.witchcraft.raycast;
 
 import io.papermc.paper.raytracing.BlockCollisionMode;
 import io.papermc.paper.raytracing.RayTraceTarget;

@@ -1,4 +1,4 @@
-package br.com.vrosa.witchCraft;
+package br.com.vrosa.witchcraft;
 
 import io.papermc.paper.plugin.loader.PluginClasspathBuilder;
 import io.papermc.paper.plugin.loader.PluginLoader;

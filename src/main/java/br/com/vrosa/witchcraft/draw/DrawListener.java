@@ -1,4 +1,4 @@
-package br.com.vrosa.witchCraft.draw;
+package br.com.vrosa.witchcraft.draw;
 
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;

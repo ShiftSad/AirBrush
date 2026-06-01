@@ -1,4 +1,4 @@
-package br.com.vrosa.witchCraft.raycast;
+package br.com.vrosa.witchcraft.raycast;
 
 import org.bukkit.Location;
 import org.joml.Vector3f;

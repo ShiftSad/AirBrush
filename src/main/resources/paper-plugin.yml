@@ -1,7 +1,7 @@
 name: WitchCraft
 version: '${version}'
 
-main: br.com.vrosa.witchCraft.WitchCraft
+main: br.com.vrosa.witchcraft.WitchCraft
 bootstrapper: br.com.vrosa.witchCraft.WitchCraftBootstrap
 loader: br.com.vrosa.witchCraft.WitchCraftLoader
 api-version: '26.1.2'
