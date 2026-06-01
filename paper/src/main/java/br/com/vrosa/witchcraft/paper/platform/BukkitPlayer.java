@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.Locale;
 import java.util.UUID;
 
 public record BukkitPlayer(@NotNull Player handle) implements WPlayer {
@@ -24,6 +25,11 @@ public record BukkitPlayer(@NotNull Player handle) implements WPlayer {
     @Override
     public @NotNull UUID uuid() {
         return handle.getUniqueId();
+    }
+
+    @Override
+    public @NotNull Locale locale() {
+        return handle.locale();
     }
 
     @Override
@@ -64,7 +70,7 @@ public record BukkitPlayer(@NotNull Player handle) implements WPlayer {
 
     @Override
     public void giveTool(@NotNull ToolType tool) {
-        handle.getInventory().addItem(ItemFactory.create(tool));
+        handle.getInventory().addItem(ItemFactory.create(tool, handle.locale()));
     }
 
     @Override

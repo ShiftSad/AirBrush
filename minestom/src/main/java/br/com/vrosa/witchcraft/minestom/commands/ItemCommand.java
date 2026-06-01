@@ -1,5 +1,6 @@
 package br.com.vrosa.witchcraft.minestom.commands;
 
+import br.com.vrosa.witchcraft.core.i18n.Messages;
 import br.com.vrosa.witchcraft.minestom.platform.MinestomPlayer;
 import br.com.vrosa.witchcraft.platform.ToolType;
 import net.kyori.adventure.text.Component;
@@ -17,24 +18,24 @@ public final class ItemCommand extends Command {
     public ItemCommand() {
         super("drawitem");
 
-        final var item = ArgumentType.Word("item")
-                .from("pencil", "eraser", "pallet");
+        final var item = ArgumentType.Word("item").from("pencil", "eraser", "pallet");
         addSyntax((sender, ctx) -> execute(sender, ctx.get(item)), item);
     }
 
     private static void execute(@NotNull CommandSender sender, @NotNull String id) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("Apenas jogadores podem usar /drawitem.", NamedTextColor.RED));
+            sender.sendMessage(Component.text(Messages.get(Locale.US, Messages.Key.PLAYERS_ONLY), NamedTextColor.RED));
             return;
         }
 
+        final var wp = MinestomPlayer.of(player);
         final var tool = ToolType.byId(id.toLowerCase(Locale.ROOT));
         if (tool == null) {
-            player.sendMessage(Component.text("Item inválido. :(", NamedTextColor.RED));
+            player.sendMessage(Component.text(Messages.get(wp.locale(), Messages.Key.DRAWITEM_INVALID), NamedTextColor.RED));
             return;
         }
 
-        MinestomPlayer.of(player).giveTool(tool);
-        player.sendMessage(Component.text("Item adicionado ao inventário.", NamedTextColor.GREEN));
+        wp.giveTool(tool);
+        player.sendMessage(Component.text(Messages.get(wp.locale(), Messages.Key.DRAWITEM_GIVEN), NamedTextColor.GREEN));
     }
 }

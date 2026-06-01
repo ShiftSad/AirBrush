@@ -12,10 +12,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
-import static org.bukkit.event.block.Action.LEFT_CLICK_AIR;
-import static org.bukkit.event.block.Action.LEFT_CLICK_BLOCK;
-import static org.bukkit.event.block.Action.RIGHT_CLICK_AIR;
-import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
+import static org.bukkit.event.block.Action.*;
 
 public final class EraserListener implements Listener {
 

@@ -6,10 +6,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.DoubleSupplier;
 
 public abstract class AbstractRaycaster implements Raycaster {
 
     private final Map<UUID, Pose> cache = new ConcurrentHashMap<>();
+    private final DoubleSupplier maxDistance;
+
+    protected AbstractRaycaster(@NotNull DoubleSupplier maxDistance) {
+        this.maxDistance = maxDistance;
+    }
+
+    protected double maxDistance() {
+        return maxDistance.getAsDouble();
+    }
 
     @Override
     public @Nullable Pose current(@NotNull WPlayer player) {

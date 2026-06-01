@@ -1,34 +1,32 @@
 package br.com.vrosa.witchcraft.minestom;
 
 import br.com.vrosa.witchcraft.core.WitchCraftEngine;
+import br.com.vrosa.witchcraft.core.config.WitchCraftConfig;
+import br.com.vrosa.witchcraft.core.i18n.Messages;
 import br.com.vrosa.witchcraft.minestom.commands.ColorCommand;
 import br.com.vrosa.witchcraft.minestom.commands.ItemCommand;
 import br.com.vrosa.witchcraft.minestom.commands.UndoCommand;
+import br.com.vrosa.witchcraft.minestom.commands.WitchCraftCommand;
+import br.com.vrosa.witchcraft.minestom.config.MinestomConfig;
 import br.com.vrosa.witchcraft.minestom.item.MinestomItems;
 import br.com.vrosa.witchcraft.minestom.platform.MinestomPlatform;
 import br.com.vrosa.witchcraft.minestom.platform.MinestomPlayer;
 import br.com.vrosa.witchcraft.minestom.platform.MinestomRaycaster;
 import br.com.vrosa.witchcraft.platform.Hotbar;
 import br.com.vrosa.witchcraft.platform.ToolType;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
-import net.minestom.server.instance.LightingChunk;
-import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
-import net.minestom.server.event.player.PlayerBlockInteractEvent;
-import net.minestom.server.event.player.PlayerChangeHeldSlotEvent;
-import net.minestom.server.event.player.PlayerDisconnectEvent;
-import net.minestom.server.event.player.PlayerHandAnimationEvent;
-import net.minestom.server.event.player.PlayerSpawnEvent;
-import net.minestom.server.event.player.PlayerUseItemEvent;
+import net.minestom.server.event.player.*;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.instance.LightingChunk;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.timer.TaskSchedule;
+
+import java.nio.file.Path;
 
 public final class WitchCraftServer {
 
@@ -41,10 +39,18 @@ public final class WitchCraftServer {
         instance.setChunkSupplier(LightingChunk::new);
         instance.setGenerator(unit -> unit.modifier().fillHeight(0, 1, Block.GLASS));
 
-        final var engine = new WitchCraftEngine(new MinestomPlatform(), new MinestomRaycaster());
+        final var config = new WitchCraftConfig();
+        MinestomConfig.load(config);
+        Messages.load(Path.of("lang"));
+
+        final var engine = new WitchCraftEngine(
+                new MinestomPlatform(), new MinestomRaycaster(config::maxRaycastLength), config);
 
         registerEvents(instance, engine);
-        registerCommands(engine);
+        registerCommands(engine, () -> {
+            MinestomConfig.load(config);
+            Messages.load(Path.of("lang"));
+        });
         scheduleTick(instance, engine);
 
         server.start("0.0.0.0", 25565);
@@ -121,11 +127,12 @@ public final class WitchCraftServer {
         }
     }
 
-    private static void registerCommands(WitchCraftEngine engine) {
+    private static void registerCommands(WitchCraftEngine engine, Runnable reload) {
         final var commands = MinecraftServer.getCommandManager();
         commands.register(new ColorCommand(engine.drawService()));
         commands.register(new ItemCommand());
         commands.register(new UndoCommand(engine.history()));
+        commands.register(new WitchCraftCommand(reload));
     }
 
     private static void scheduleTick(Instance instance, WitchCraftEngine engine) {

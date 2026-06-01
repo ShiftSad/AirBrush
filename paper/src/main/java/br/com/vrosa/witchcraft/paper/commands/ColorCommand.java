@@ -1,6 +1,7 @@
 package br.com.vrosa.witchcraft.paper.commands;
 
 import br.com.vrosa.witchcraft.core.draw.DrawService;
+import br.com.vrosa.witchcraft.core.i18n.Messages;
 import br.com.vrosa.witchcraft.paper.platform.BukkitPlayer;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -34,18 +35,19 @@ public final class ColorCommand {
 
     private static int apply(@NotNull CommandContext<CommandSourceStack> ctx, @NotNull DrawService service) {
         if (!(ctx.getSource().getSender() instanceof Player player)) {
-            ctx.getSource().getSender().sendMessage(Component.text("Apenas jogadores podem usar /color.", NamedTextColor.RED));
+            ctx.getSource().getSender().sendMessage(Component.text(Messages.get(Locale.US, Messages.Key.PLAYERS_ONLY), NamedTextColor.RED));
             return 0;
         }
 
+        final var locale = player.locale();
         final var rgb = parse(StringArgumentType.getString(ctx, "cor"));
         if (rgb == null) {
-            player.sendMessage(Component.text("Cor inválida. Use #RRGGBB ou um nome (red, blue, green, ...).", NamedTextColor.RED));
+            player.sendMessage(Component.text(Messages.get(locale, Messages.Key.COLOR_INVALID), NamedTextColor.RED));
             return 0;
         }
 
         service.setColor(BukkitPlayer.of(player), rgb);
-        player.sendMessage(Component.text("Cor do lápis alterada.", TextColor.color(rgb)));
+        player.sendMessage(Component.text(Messages.get(locale, Messages.Key.COLOR_CHANGED), TextColor.color(rgb)));
         return Command.SINGLE_SUCCESS;
     }
 

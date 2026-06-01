@@ -1,11 +1,6 @@
 package br.com.vrosa.witchcraft.core.color;
 
-import br.com.vrosa.witchcraft.platform.Platform;
-import br.com.vrosa.witchcraft.platform.TileHandle;
-import br.com.vrosa.witchcraft.platform.Transform;
-import br.com.vrosa.witchcraft.platform.Vec3;
-import br.com.vrosa.witchcraft.platform.WPlayer;
-import br.com.vrosa.witchcraft.platform.WorldRef;
+import br.com.vrosa.witchcraft.platform.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;

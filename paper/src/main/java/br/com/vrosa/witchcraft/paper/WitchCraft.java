@@ -1,9 +1,13 @@
 package br.com.vrosa.witchcraft.paper;
 
 import br.com.vrosa.witchcraft.core.WitchCraftEngine;
+import br.com.vrosa.witchcraft.core.config.WitchCraftConfig;
+import br.com.vrosa.witchcraft.core.i18n.Messages;
 import br.com.vrosa.witchcraft.paper.commands.ColorCommand;
 import br.com.vrosa.witchcraft.paper.commands.ItemCommand;
 import br.com.vrosa.witchcraft.paper.commands.UndoCommand;
+import br.com.vrosa.witchcraft.paper.commands.WitchCraftCommand;
+import br.com.vrosa.witchcraft.paper.config.PaperConfig;
 import br.com.vrosa.witchcraft.paper.listeners.DrawListener;
 import br.com.vrosa.witchcraft.paper.listeners.EraserListener;
 import br.com.vrosa.witchcraft.paper.listeners.PalletListener;
@@ -17,10 +21,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class WitchCraft extends JavaPlugin {
 
-    private final WitchCraftEngine engine = new WitchCraftEngine(new BukkitPlatform(), new BukkitRaycaster());
+    private final WitchCraftConfig config = new WitchCraftConfig();
+    private WitchCraftEngine engine;
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+        PaperConfig.load(config, getConfig());
+        Messages.load(getDataFolder().toPath().resolve("lang"));
+
+        final var raycaster = new BukkitRaycaster(config::maxRaycastLength);
+        engine = new WitchCraftEngine(new BukkitPlatform(), raycaster, config);
+
         final var pm = getServer().getPluginManager();
         pm.registerEvents(new DrawListener(engine.drawService()), this);
         pm.registerEvents(new EraserListener(engine.eraserService()), this);
@@ -33,7 +45,14 @@ public final class WitchCraft extends JavaPlugin {
             event.registrar().register(ColorCommand.build(engine.drawService()), "Troca a cor do lápis.");
             event.registrar().register(ItemCommand.build(), "Pega os itens maneiros");
             event.registrar().register(UndoCommand.build(engine.history()), "Desfaz as últimas alterações.");
+            event.registrar().register(WitchCraftCommand.build(this::reload), "Administra o WitchCraft.");
         });
+    }
+
+    private void reload() {
+        reloadConfig();
+        PaperConfig.load(config, getConfig());
+        Messages.load(getDataFolder().toPath().resolve("lang"));
     }
 
     private void tick() {

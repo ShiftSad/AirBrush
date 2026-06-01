@@ -1,6 +1,5 @@
 package br.com.vrosa.witchcraft.platform;
 
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
@@ -8,24 +7,24 @@ import org.jetbrains.annotations.Nullable;
 
 public enum ToolType {
 
-    PENCIL("pencil", Component.text("Pencil", NamedTextColor.YELLOW)),
-    ERASER("eraser", Component.text("Eraser", NamedTextColor.GRAY)),
-    PALLET("pallet", Component.text("Pallet", TextColor.color(0x55FFFF)));
+    PENCIL("pencil", NamedTextColor.YELLOW),
+    ERASER("eraser", NamedTextColor.GRAY),
+    PALLET("pallet", TextColor.color(0x55FFFF));
 
     private final String id;
-    private final Component displayName;
+    private final TextColor color;
 
-    ToolType(String id, Component displayName) {
+    ToolType(String id, TextColor color) {
         this.id = id;
-        this.displayName = displayName;
+        this.color = color;
     }
 
     public @NotNull String id() {
         return id;
     }
 
-    public @NotNull Component displayName() {
-        return displayName;
+    public @NotNull TextColor color() {
+        return color;
     }
 
     public static @Nullable ToolType byId(@Nullable String id) {

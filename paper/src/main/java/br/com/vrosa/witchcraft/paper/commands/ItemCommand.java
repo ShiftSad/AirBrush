@@ -1,5 +1,6 @@
 package br.com.vrosa.witchcraft.paper.commands;
 
+import br.com.vrosa.witchcraft.core.i18n.Messages;
 import br.com.vrosa.witchcraft.paper.platform.BukkitPlayer;
 import br.com.vrosa.witchcraft.platform.ToolType;
 import com.mojang.brigadier.Command;
@@ -10,6 +11,8 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,19 +33,19 @@ public final class ItemCommand {
 
     private static int apply(@NotNull CommandContext<CommandSourceStack> context) {
         if (!(context.getSource().getSender() instanceof Player player)) {
-            context.getSource().getSender().sendMessage("Apenas jogadores podem usar /drawitem.");
+            context.getSource().getSender().sendMessage(Component.text(Messages.get(Locale.US, Messages.Key.PLAYERS_ONLY), NamedTextColor.RED));
             return 0;
         }
 
-        final var id = StringArgumentType.getString(context, "item").toLowerCase(Locale.ROOT);
-        final var tool = ToolType.byId(id);
+        final var locale = player.locale();
+        final var tool = ToolType.byId(StringArgumentType.getString(context, "item").toLowerCase(Locale.ROOT));
         if (tool == null) {
-            player.sendMessage("Item inválido. :(");
+            player.sendMessage(Component.text(Messages.get(locale, Messages.Key.DRAWITEM_INVALID), NamedTextColor.RED));
             return 0;
         }
 
         BukkitPlayer.of(player).giveTool(tool);
-        player.sendMessage("Item adicionado ao inventário.");
+        player.sendMessage(Component.text(Messages.get(locale, Messages.Key.DRAWITEM_GIVEN), NamedTextColor.GREEN));
         return Command.SINGLE_SUCCESS;
     }
 

@@ -6,11 +6,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.Locale;
 import java.util.UUID;
 
 public interface WPlayer {
 
     @NotNull UUID uuid();
+
+    @NotNull Locale locale();
 
     @NotNull WorldRef world();
 

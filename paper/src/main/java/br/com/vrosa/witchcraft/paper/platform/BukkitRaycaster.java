@@ -13,7 +13,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.function.DoubleSupplier;
+
 public final class BukkitRaycaster extends AbstractRaycaster {
+
+    public BukkitRaycaster(@NotNull DoubleSupplier maxDistance) {
+        super(maxDistance);
+    }
 
     @Override
     protected @Nullable Pose trace(@NotNull WPlayer player) {
@@ -25,7 +31,7 @@ public final class BukkitRaycaster extends AbstractRaycaster {
             builder.blockCollisionMode(BlockCollisionMode.OUTLINE);
             builder.fluidCollisionMode(FluidCollisionMode.ALWAYS);
             builder.direction(eye.getDirection());
-            builder.maxDistance(MAX_DISTANCE);
+            builder.maxDistance(maxDistance());
             builder.targets(RayTraceTarget.BLOCK);
             builder.start(eye);
         });

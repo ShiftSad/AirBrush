@@ -1,6 +1,7 @@
 package br.com.vrosa.witchcraft.core;
 
 import br.com.vrosa.witchcraft.core.color.ColorService;
+import br.com.vrosa.witchcraft.core.config.WitchCraftConfig;
 import br.com.vrosa.witchcraft.core.draw.DrawService;
 import br.com.vrosa.witchcraft.core.erase.EraserService;
 import br.com.vrosa.witchcraft.core.history.History;
@@ -11,18 +12,24 @@ import org.jetbrains.annotations.NotNull;
 
 public final class WitchCraftEngine {
 
+    private final WitchCraftConfig config;
     private final Raycaster raycaster;
     private final History history;
     private final DrawService drawService;
     private final EraserService eraserService;
     private final ColorService colorService;
 
-    public WitchCraftEngine(@NotNull Platform platform, @NotNull Raycaster raycaster) {
+    public WitchCraftEngine(@NotNull Platform platform, @NotNull Raycaster raycaster, @NotNull WitchCraftConfig config) {
+        this.config = config;
         this.raycaster = raycaster;
         this.history = new History(platform);
-        this.drawService = new DrawService(platform, raycaster, history);
-        this.eraserService = new EraserService(platform, raycaster, history);
+        this.drawService = new DrawService(platform, raycaster, history, config);
+        this.eraserService = new EraserService(platform, raycaster, history, config);
         this.colorService = new ColorService(platform, drawService);
+    }
+
+    public @NotNull WitchCraftConfig config() {
+        return config;
     }
 
     public @NotNull Raycaster raycaster() {

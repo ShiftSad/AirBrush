@@ -1,6 +1,7 @@
 package br.com.vrosa.witchcraft.core.color;
 
 import br.com.vrosa.witchcraft.core.draw.DrawService;
+import br.com.vrosa.witchcraft.core.i18n.Messages;
 import br.com.vrosa.witchcraft.platform.Platform;
 import br.com.vrosa.witchcraft.platform.Sounds;
 import br.com.vrosa.witchcraft.platform.WPlayer;
@@ -45,7 +46,7 @@ public final class ColorService {
         drawService.setColor(player, rgb);
         close(player);
         player.playSound(Sounds.PLAYER_LEVELUP, 0.6f, 1.8f);
-        player.actionBar(Component.text("Cor escolhida.", TextColor.color(rgb)));
+        player.actionBar(Component.text(Messages.get(player.locale(), Messages.Key.COLOR_CHOSEN), TextColor.color(rgb)));
     }
 
     public void close(@NotNull WPlayer player) {
@@ -59,7 +60,7 @@ public final class ColorService {
 
         if (picker.shouldClose()) {
             close(player);
-            player.actionBar(Component.text("Paleta fechada.", NamedTextColor.GRAY));
+            player.actionBar(Component.text(Messages.get(player.locale(), Messages.Key.PALETTE_CLOSED), NamedTextColor.GRAY));
             return;
         }
         picker.tick();
@@ -71,6 +72,6 @@ public final class ColorService {
         picker.spawn();
         pickers.put(player.uuid(), picker);
         player.playSound(Sounds.NOTE_BLOCK_HAT, 0.7f, 1.5f);
-        player.actionBar(Component.text("Clique para mover o seletor; clique de novo para confirmar.", NamedTextColor.GRAY));
+        player.actionBar(Component.text(Messages.get(player.locale(), Messages.Key.PALETTE_HINT), NamedTextColor.GRAY));
     }
 }

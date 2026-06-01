@@ -4,11 +4,7 @@ import br.com.vrosa.witchcraft.platform.Platform;
 import br.com.vrosa.witchcraft.platform.WPlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public final class History {
 

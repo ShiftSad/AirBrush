@@ -1,11 +1,7 @@
 package br.com.vrosa.witchcraft.minestom.platform;
 
 import br.com.vrosa.witchcraft.minestom.item.Tags;
-import br.com.vrosa.witchcraft.platform.SegmentHandle;
-import br.com.vrosa.witchcraft.platform.SegmentSnapshot;
-import br.com.vrosa.witchcraft.platform.Transform;
-import br.com.vrosa.witchcraft.platform.Vec3;
-import br.com.vrosa.witchcraft.platform.WorldRef;
+import br.com.vrosa.witchcraft.platform.*;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;

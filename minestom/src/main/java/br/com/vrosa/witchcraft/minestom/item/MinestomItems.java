@@ -1,6 +1,8 @@
 package br.com.vrosa.witchcraft.minestom.item;
 
+import br.com.vrosa.witchcraft.core.i18n.Messages;
 import br.com.vrosa.witchcraft.platform.ToolType;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.item.ItemStack;
@@ -10,15 +12,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 
 public final class MinestomItems {
 
     private MinestomItems() {}
 
-    public static @NotNull ItemStack tool(@NotNull ToolType tool) {
+    public static @NotNull ItemStack tool(@NotNull ToolType tool, @NotNull Locale locale) {
         return ItemStack.builder(Material.CARROT_ON_A_STICK)
                 .set(DataComponents.ITEM_MODEL, Tags.NAMESPACE + ":" + tool.id())
-                .customName(tool.displayName())
+                .customName(Component.text(Messages.toolName(locale, tool), tool.color()))
                 .set(Tags.ITEM_TYPE, tool.id())
                 .build();
     }

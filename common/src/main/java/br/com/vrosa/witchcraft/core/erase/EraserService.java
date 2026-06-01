@@ -1,40 +1,20 @@
 package br.com.vrosa.witchcraft.core.erase;
 
+import br.com.vrosa.witchcraft.core.config.WitchCraftConfig;
 import br.com.vrosa.witchcraft.core.history.Change;
 import br.com.vrosa.witchcraft.core.history.History;
-import br.com.vrosa.witchcraft.platform.CursorHandle;
-import br.com.vrosa.witchcraft.platform.Platform;
-import br.com.vrosa.witchcraft.platform.Pose;
-import br.com.vrosa.witchcraft.platform.Raycaster;
-import br.com.vrosa.witchcraft.platform.SegmentHandle;
-import br.com.vrosa.witchcraft.platform.SegmentSnapshot;
-import br.com.vrosa.witchcraft.platform.Sounds;
-import br.com.vrosa.witchcraft.platform.ToolType;
-import br.com.vrosa.witchcraft.platform.Transform;
-import br.com.vrosa.witchcraft.platform.WPlayer;
+import br.com.vrosa.witchcraft.core.i18n.Messages;
+import br.com.vrosa.witchcraft.platform.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class EraserService {
-
-    private static final double DEFAULT_RADIUS = 0.5;
-    private static final double MIN_RADIUS = 0.125;
-    private static final double MAX_RADIUS = 4.0;
-    private static final double RADIUS_STEP = 0.125;
 
     private static final float SURFACE_OFFSET = 0.01f;
     private static final float EPSILON = 1.0e-4f;
@@ -43,6 +23,7 @@ public final class EraserService {
     private final Platform platform;
     private final Raycaster raycaster;
     private final History history;
+    private final WitchCraftConfig config;
 
     private final Map<UUID, EraseMode> modes = new HashMap<>();
     private final Map<UUID, Double> radii = new HashMap<>();
@@ -50,10 +31,12 @@ public final class EraserService {
     private final Set<UUID> erasing = new HashSet<>();
     private final Map<UUID, List<SegmentSnapshot>> buffers = new HashMap<>();
 
-    public EraserService(@NotNull Platform platform, @NotNull Raycaster raycaster, @NotNull History history) {
+    public EraserService(@NotNull Platform platform, @NotNull Raycaster raycaster,
+                         @NotNull History history, @NotNull WitchCraftConfig config) {
         this.platform = platform;
         this.raycaster = raycaster;
         this.history = history;
+        this.config = config;
     }
 
     public boolean isNotHolding(@NotNull WPlayer player) {
@@ -65,7 +48,7 @@ public final class EraserService {
     }
 
     public double radiusOf(@NotNull WPlayer player) {
-        return radii.getOrDefault(player.uuid(), DEFAULT_RADIUS);
+        return radii.getOrDefault(player.uuid(), config.eraserDefaultRadius());
     }
 
     public boolean isErasing(@NotNull WPlayer player) {
@@ -90,7 +73,7 @@ public final class EraserService {
         final boolean active = isErasing(player);
         updateCursor(player, pointer, mode, radius, active);
         if (active) eraseStep(player, pointer);
-        player.actionBar(actionBar(mode, radius, active));
+        player.actionBar(actionBar(player.locale(), mode, radius, active));
     }
 
     public void toggleErasing(@NotNull WPlayer player) {
@@ -101,15 +84,15 @@ public final class EraserService {
         final var mode = modeOf(player).next();
         modes.put(player.uuid(), mode);
         player.playSound(Sounds.UI_BUTTON_CLICK, 0.6f, 1.4f);
-        player.actionBar(actionBar(mode, radiusOf(player), isErasing(player)));
+        player.actionBar(actionBar(player.locale(), mode, radiusOf(player), isErasing(player)));
     }
 
     public void changeRadius(@NotNull WPlayer player, int direction) {
         final double current = radiusOf(player);
-        final double next = clamp(current + direction * RADIUS_STEP);
+        final double next = clamp(current + direction * config.eraserRadiusStep());
         radii.put(player.uuid(), next);
         player.playSound(Sounds.UI_BUTTON_CLICK, 0.5f, next > current ? 1.8f : 1.0f);
-        player.actionBar(actionBar(modeOf(player), next, isErasing(player)));
+        player.actionBar(actionBar(player.locale(), modeOf(player), next, isErasing(player)));
     }
 
     public void remove(@NotNull WPlayer player) {
@@ -181,6 +164,10 @@ public final class EraserService {
         if (cursor != null && cursor.isValid()) cursor.remove();
     }
 
+    private double clamp(double value) {
+        return Math.clamp(value, config.eraserMinRadius(), config.eraserMaxRadius());
+    }
+
     private static @NotNull Transform surface(@NotNull Vector3f normal, double radius) {
         final var n = new Vector3f(normal);
         if (n.lengthSquared() < EPSILON) n.set(0f, 1f, 0f);
@@ -193,16 +180,18 @@ public final class EraserService {
                 new Vector3f(diameter, diameter, diameter), new Quaternionf());
     }
 
-    private static @NotNull Component actionBar(@NotNull EraseMode mode, double radius, boolean active) {
+    private static @NotNull Component actionBar(@NotNull Locale locale, @NotNull EraseMode mode, double radius, boolean active) {
+        final var modeLabel = Messages.get(locale, mode == EraseMode.AREA ? Messages.Key.ERASER_AREA : Messages.Key.ERASER_STROKE);
         final var state = active
-                ? Component.text("APAGANDO", NamedTextColor.RED)
-                : Component.text("parado", NamedTextColor.GREEN);
-        return Component.text("Borracha", NamedTextColor.GRAY)
-                .append(Component.text("  •  ", NamedTextColor.DARK_GRAY))
-                .append(Component.text(mode.label(), mode.color()))
-                .append(Component.text("  •  ", NamedTextColor.DARK_GRAY))
-                .append(Component.text(String.format(Locale.ROOT, "Raio %.3f", radius), NamedTextColor.WHITE))
-                .append(Component.text("  •  ", NamedTextColor.DARK_GRAY))
+                ? Component.text(Messages.get(locale, Messages.Key.ERASING), NamedTextColor.RED)
+                : Component.text(Messages.get(locale, Messages.Key.IDLE), NamedTextColor.GREEN);
+        final var separator = Component.text("  •  ", NamedTextColor.DARK_GRAY);
+        return Component.text(Messages.get(locale, Messages.Key.ERASER), NamedTextColor.GRAY)
+                .append(separator)
+                .append(Component.text(modeLabel, mode.color()))
+                .append(separator)
+                .append(Component.text(Messages.format(locale, Messages.Key.RADIUS, radius), NamedTextColor.WHITE))
+                .append(separator)
                 .append(state);
     }
 
@@ -211,9 +200,5 @@ public final class EraserService {
         final int g = (int) (((rgb >> 8) & 0xFF) * ACTIVE_DARKEN);
         final int b = (int) ((rgb & 0xFF) * ACTIVE_DARKEN);
         return (r << 16) | (g << 8) | b;
-    }
-
-    private static double clamp(double value) {
-        return Math.clamp(value, MIN_RADIUS, MAX_RADIUS);
     }
 }

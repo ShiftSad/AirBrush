@@ -1,6 +1,7 @@
 package br.com.vrosa.witchcraft.minestom.commands;
 
 import br.com.vrosa.witchcraft.core.draw.DrawService;
+import br.com.vrosa.witchcraft.core.i18n.Messages;
 import br.com.vrosa.witchcraft.minestom.platform.MinestomPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,18 +26,20 @@ public final class ColorCommand extends Command {
 
     private static void execute(@NotNull CommandSender sender, @NotNull DrawService service, @NotNull String raw) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("Apenas jogadores podem usar /color.", NamedTextColor.RED));
+            sender.sendMessage(Component.text(Messages.get(Locale.US, Messages.Key.PLAYERS_ONLY), NamedTextColor.RED));
             return;
         }
 
+        final var wp = MinestomPlayer.of(player);
+        final var locale = wp.locale();
         final var rgb = parse(raw);
         if (rgb == null) {
-            player.sendMessage(Component.text("Cor inválida. Use #RRGGBB ou um nome (red, blue, green, ...).", NamedTextColor.RED));
+            player.sendMessage(Component.text(Messages.get(locale, Messages.Key.COLOR_INVALID), NamedTextColor.RED));
             return;
         }
 
-        service.setColor(MinestomPlayer.of(player), rgb);
-        player.sendMessage(Component.text("Cor do lápis alterada.", TextColor.color(rgb)));
+        service.setColor(wp, rgb);
+        player.sendMessage(Component.text(Messages.get(locale, Messages.Key.COLOR_CHANGED), TextColor.color(rgb)));
     }
 
     private static @Nullable Integer parse(@NotNull String raw) {

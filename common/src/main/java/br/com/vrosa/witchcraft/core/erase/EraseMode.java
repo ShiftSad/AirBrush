@@ -5,19 +5,13 @@ import org.jetbrains.annotations.NotNull;
 
 public enum EraseMode {
 
-    AREA("Área", 0x55FFFF),
-    STROKE("Traço inteiro", 0xFF5555);
+    AREA(0x55FFFF),
+    STROKE(0xFF5555);
 
-    private final String label;
     private final int tint;
 
-    EraseMode(String label, int tint) {
-        this.label = label;
+    EraseMode(int tint) {
         this.tint = tint;
-    }
-
-    public @NotNull String label() {
-        return label;
     }
 
     public int tint() {

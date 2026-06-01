@@ -38,5 +38,7 @@ tasks {
         group = "application"
         mainClass = mainClassName
         classpath = sourceSets["main"].runtimeClasspath
+        workingDir = layout.projectDirectory.dir("run").asFile
+        doFirst { workingDir.mkdirs() }
     }
 }

@@ -8,7 +8,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.function.DoubleSupplier;
+
 public final class MinestomRaycaster extends AbstractRaycaster {
+
+    public MinestomRaycaster(@NotNull DoubleSupplier maxDistance) {
+        super(maxDistance);
+    }
 
     @Override
     protected @Nullable Pose trace(@NotNull WPlayer player) {
@@ -42,10 +48,11 @@ public final class MinestomRaycaster extends AbstractRaycaster {
         double tMaxY = dy == 0 ? Double.MAX_VALUE : (stepY > 0 ? (y + 1 - oy) : (oy - y)) * tDeltaY;
         double tMaxZ = dz == 0 ? Double.MAX_VALUE : (stepZ > 0 ? (z + 1 - oz) : (oz - z)) * tDeltaZ;
 
+        final double maxDistance = maxDistance();
         double t = 0;
         int axis;
 
-        while (t <= MAX_DISTANCE) {
+        while (t <= maxDistance) {
             if (tMaxX < tMaxY && tMaxX < tMaxZ) {
                 x += stepX;
                 t = tMaxX;
@@ -62,7 +69,7 @@ public final class MinestomRaycaster extends AbstractRaycaster {
                 tMaxZ += tDeltaZ;
                 axis = 2;
             }
-            if (t > MAX_DISTANCE) break;
+            if (t > maxDistance) break;
 
             if (!instance.getBlock(x, y, z).isAir()) {
                 final var normal = switch (axis) {

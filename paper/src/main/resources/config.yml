@@ -1,0 +1,15 @@
+max-raycast-length: 10.0
+segment-depth: 0.03
+smooth-iterations: 2
+
+pencil:
+  default-radius: 0.05
+  min-radius: 0.01
+  max-radius: 0.1
+  radius-step: 0.01
+
+eraser:
+  default-radius: 0.5
+  min-radius: 0.125
+  max-radius: 4.0
+  radius-step: 0.125
