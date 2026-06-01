@@ -4,7 +4,6 @@ import br.com.vrosa.witchcraft.keys.ItemDefinition;
 import io.papermc.paper.raytracing.BlockCollisionMode;
 import io.papermc.paper.raytracing.RayTraceTarget;
 import org.bukkit.FluidCollisionMode;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;

@@ -21,7 +21,6 @@ import java.util.UUID;
 
 public final class SegmentRenderer {
 
-    private static final float WIDTH = 0.05f;
     private static final float DEPTH = 0.03f;
     private static final float SURFACE_OFFSET = 0.005f;
     private static final float EPSILON = 1.0e-4f;
@@ -49,8 +48,8 @@ public final class SegmentRenderer {
         });
     }
 
-    public static void orient(@NotNull ItemDisplay display, @NotNull RayHit from, @NotNull Location to) {
-        display.setTransformation(transform(from.position(), to, from.normal()));
+    public static void orient(@NotNull ItemDisplay display, @NotNull RayHit from, @NotNull Location to, float width) {
+        display.setTransformation(transform(from.position(), to, from.normal(), width));
     }
 
     public static void hide(@NotNull ItemDisplay display) {
@@ -58,9 +57,9 @@ public final class SegmentRenderer {
     }
 
     public static void drawPermanent(@NotNull RayHit from, @NotNull Location to, int rgb,
-                                     @NotNull UUID strokeId, @NotNull UUID segmentId) {
+                                     @NotNull UUID strokeId, @NotNull UUID segmentId, float width) {
         final var display = spawn(from.position().getWorld(), from.position(), true, rgb);
-        display.setTransformation(transform(from.position(), to, from.normal()));
+        display.setTransformation(transform(from.position(), to, from.normal(), width));
         Segments.tag(display, strokeId, segmentId, rgb);
     }
 
@@ -68,7 +67,7 @@ public final class SegmentRenderer {
         return new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(0f), new Quaternionf());
     }
 
-    private static @NotNull Transformation transform(@NotNull Location from, @NotNull Location to, @NotNull Vector3f normal) {
+    private static @NotNull Transformation transform(@NotNull Location from, @NotNull Location to, @NotNull Vector3f normal, float width) {
         final var forward = new Vector3f(
                 (float) (to.getX() - from.getX()),
                 (float) (to.getY() - from.getY()),
@@ -86,7 +85,7 @@ public final class SegmentRenderer {
         if (right.lengthSquared() < EPSILON) {
             final var rotation = new Quaternionf().rotationTo(new Vector3f(0f, 0f, 1f), forward);
             final var off = rotation.transform(new Vector3f(0f, 0f, length / 2f), new Vector3f());
-            return new Transformation(off, rotation, new Vector3f(WIDTH, DEPTH, length), new Quaternionf());
+            return new Transformation(off, rotation, new Vector3f(width, DEPTH, length), new Quaternionf());
         }
         right.normalize();
         final var up = new Vector3f(forward).cross(right).normalize();
@@ -98,6 +97,6 @@ public final class SegmentRenderer {
 
         final var offset = rotation.transform(
                 new Vector3f(0f, SURFACE_OFFSET + DEPTH / 2f, length / 2f), new Vector3f());
-        return new Transformation(offset, rotation, new Vector3f(WIDTH, DEPTH, length), new Quaternionf());
+        return new Transformation(offset, rotation, new Vector3f(width, DEPTH, length), new Quaternionf());
     }
 }

@@ -15,10 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static br.com.vrosa.witchcraft.keys.WitchCraftKey.SEGMENT_COLOR;
-import static br.com.vrosa.witchcraft.keys.WitchCraftKey.SEGMENT_ID;
-import static br.com.vrosa.witchcraft.keys.WitchCraftKey.STROKE_ID;
-import static br.com.vrosa.witchcraft.keys.WitchCraftKey.WITCHCRAFT_KEY;
+import static br.com.vrosa.witchcraft.keys.WitchCraftKey.*;
 
 public final class Segments {
 

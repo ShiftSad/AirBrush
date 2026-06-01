@@ -24,14 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class EraserService {
@@ -238,7 +231,7 @@ public final class EraserService {
     }
 
     private static double clamp(double value) {
-        return Math.max(MIN_RADIUS, Math.min(MAX_RADIUS, value));
+        return Math.clamp(value, MIN_RADIUS, MAX_RADIUS);
     }
 
     private static final class Cursor {

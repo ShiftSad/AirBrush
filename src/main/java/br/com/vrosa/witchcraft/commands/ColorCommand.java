@@ -7,8 +7,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-
-import java.util.concurrent.CompletableFuture;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
@@ -19,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 public final class ColorCommand {
 
@@ -49,7 +48,6 @@ public final class ColorCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    /** Aceita {@code #RRGGBB}, {@code RRGGBB} ou um nome de cor do Minecraft. */
     private static @Nullable Integer parse(@NotNull String raw) {
         final var s = raw.trim();
         if (s.isEmpty()) return null;

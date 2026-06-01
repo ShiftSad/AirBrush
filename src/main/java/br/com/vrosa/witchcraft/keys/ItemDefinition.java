@@ -1,6 +1,5 @@
 package br.com.vrosa.witchcraft.keys;
 
-import br.com.vrosa.witchcraft.WitchCraft;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;

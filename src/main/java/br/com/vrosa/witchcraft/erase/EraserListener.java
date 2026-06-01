@@ -4,7 +4,6 @@ import br.com.vrosa.witchcraft.history.History;
 import br.com.vrosa.witchcraft.keys.ItemDefinition;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -12,7 +11,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
 import static org.bukkit.event.block.Action.*;
-import static org.bukkit.event.block.Action.LEFT_CLICK_BLOCK;
 
 public final class EraserListener implements Listener {
 

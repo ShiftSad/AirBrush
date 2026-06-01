@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,26 @@ public final class DrawListener implements Listener {
     }
 
     @EventHandler
+    public void onScroll(@NotNull PlayerItemHeldEvent event) {
+        final var player = event.getPlayer();
+        if (!player.isSneaking()) return;
+
+        final var held = player.getInventory().getItem(event.getPreviousSlot());
+        if (held == null || ItemDefinition.getType(held) != ItemDefinition.PENCIL) return;
+
+        event.setCancelled(true);
+        service.changeRadius(player, scrollDirection(event.getPreviousSlot(), event.getNewSlot()));
+    }
+
+    @EventHandler
     public void onQuit(@NotNull PlayerQuitEvent event) {
         service.remove(event.getPlayer());
+    }
+
+    private static int scrollDirection(int previous, int next) {
+        int raw = next - previous;
+        if (raw > 4) raw -= 9;
+        if (raw < -4) raw += 9;
+        return Integer.signum(raw);
     }
 }

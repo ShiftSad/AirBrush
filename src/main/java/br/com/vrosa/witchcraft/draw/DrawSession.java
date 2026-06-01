@@ -11,6 +11,7 @@ final class DrawSession {
 
     final DrawMode mode;
     final int rgb;
+    final float width;
     final UUID strokeId = UUID.randomUUID();
     final List<RayHit> samples = new ArrayList<>();
     final List<ItemDisplay> preview = new ArrayList<>();
@@ -18,8 +19,9 @@ final class DrawSession {
     RayHit anchor;
     ItemDisplay rubberband;
 
-    DrawSession(DrawMode mode, int rgb) {
+    DrawSession(DrawMode mode, int rgb, float width) {
         this.mode = mode;
         this.rgb = rgb;
+        this.width = width;
     }
 }
