@@ -17,6 +17,8 @@ import org.joml.Matrix3f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.UUID;
+
 public final class SegmentRenderer {
 
     private static final float WIDTH = 0.05f;
@@ -55,9 +57,11 @@ public final class SegmentRenderer {
         display.setTransformation(empty());
     }
 
-    public static void drawPermanent(@NotNull RayHit from, @NotNull Location to, int rgb) {
+    public static void drawPermanent(@NotNull RayHit from, @NotNull Location to, int rgb,
+                                     @NotNull UUID strokeId, @NotNull UUID segmentId) {
         final var display = spawn(from.position().getWorld(), from.position(), true, rgb);
         display.setTransformation(transform(from.position(), to, from.normal()));
+        Segments.tag(display, strokeId, segmentId, rgb);
     }
 
     private static @NotNull Transformation empty() {

@@ -1,9 +1,12 @@
 package br.com.vrosa.witchcraft.draw;
 
+import br.com.vrosa.witchcraft.history.Change;
+import br.com.vrosa.witchcraft.history.History;
 import br.com.vrosa.witchcraft.raycast.RayHit;
 import br.com.vrosa.witchcraft.raycast.Raycaster;
 import br.com.vrosa.witchcraft.render.Curve;
 import br.com.vrosa.witchcraft.render.SegmentRenderer;
+import br.com.vrosa.witchcraft.render.Segments;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,9 +25,11 @@ public final class DrawService {
     private final Map<UUID, DrawSession> sessions = new HashMap<>();
     private final Map<UUID, Integer> pencil = new HashMap<>();
     private final Raycaster raycaster;
+    private final History history;
 
-    public DrawService(@NotNull Raycaster raycaster) {
+    public DrawService(@NotNull Raycaster raycaster, @NotNull History history) {
         this.raycaster = raycaster;
+        this.history = history;
     }
 
     public boolean isActive(@NotNull Player player) {
@@ -122,7 +127,12 @@ public final class DrawService {
         discard(s);
         sessions.remove(player.getUniqueId());
         if (s.samples.size() < 2) return;
-        renderStroke(Curve.chaikin(s.samples, SMOOTH_ITERATIONS), s.rgb);
+
+        final var points = Curve.chaikin(s.samples, SMOOTH_ITERATIONS);
+        final int count = renderStroke(points, s.rgb, s.strokeId);
+        if (count > 0) {
+            history.record(player, new Change.Draw(points.getFirst().position(), s.strokeId, count));
+        }
     }
 
     private void startStraight(@NotNull Player player, @NotNull RayHit pointer) {
@@ -135,6 +145,8 @@ public final class DrawService {
     private void commitStraight(@NotNull DrawSession s, @NotNull RayHit pointer) {
         SegmentRenderer.orient(s.rubberband, s.anchor, pointer.position());
         s.rubberband.setPersistent(true);
+        Segments.tag(s.rubberband, s.strokeId, UUID.randomUUID(), s.rgb);
+        s.committed.add(s.rubberband);
         s.anchor = pointer.copy();
         s.rubberband = SegmentRenderer.spawn(s.anchor.position().getWorld(), s.anchor.position(), false, s.rgb);
     }
@@ -142,6 +154,10 @@ public final class DrawService {
     private void finishStraight(@NotNull Player player, @NotNull DrawSession s) {
         if (s.rubberband != null && s.rubberband.isValid()) s.rubberband.remove();
         sessions.remove(player.getUniqueId());
+        if (!s.committed.isEmpty()) {
+            history.record(player, new Change.Draw(
+                    s.committed.getFirst().getLocation(), s.strokeId, s.committed.size()));
+        }
     }
 
     private void cancelSession(@NotNull Player player, @NotNull DrawSession s) {
@@ -149,10 +165,11 @@ public final class DrawService {
         sessions.remove(player.getUniqueId());
     }
 
-    private void renderStroke(@NotNull List<RayHit> pts, int rgb) {
+    private int renderStroke(@NotNull List<RayHit> pts, int rgb, @NotNull UUID strokeId) {
         for (int i = 0; i < pts.size() - 1; i++) {
-            SegmentRenderer.drawPermanent(pts.get(i), pts.get(i + 1).position(), rgb);
+            SegmentRenderer.drawPermanent(pts.get(i), pts.get(i + 1).position(), rgb, strokeId, strokeId);
         }
+        return Math.max(0, pts.size() - 1);
     }
 
     void remove(@NotNull Player player) {

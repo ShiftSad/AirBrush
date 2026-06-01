@@ -24,11 +24,7 @@ public final class DrawListener implements Listener {
         final var player = event.getPlayer();
         final var item = event.getItem();
 
-        if (item == null) return;
-        if (!ItemDefinition.hasAnyType(item)) return;
-
-        final var type = ItemDefinition.getType(item);
-        if (type == null) return;
+        if (item == null || ItemDefinition.getType(item) != ItemDefinition.PENCIL) return;
 
         final var action = event.getAction();
         final boolean right = action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK;
@@ -36,10 +32,7 @@ public final class DrawListener implements Listener {
         if (!right && !left) return;
 
         event.setCancelled(true);
-
-        if (type == ItemDefinition.PENCIL) {
-            service.handlePencil(player, right);
-        }
+        service.handlePencil(player, right);
     }
 
     @EventHandler
