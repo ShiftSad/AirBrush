@@ -1,0 +1,11 @@
+package br.com.vrosa.witchCraft.raycast;
+
+import org.bukkit.Location;
+import org.joml.Vector3f;
+
+public record RayHit(Location position, Vector3f normal) {
+
+    public RayHit copy() {
+        return new RayHit(position.clone(), new Vector3f(normal));
+    }
+}
