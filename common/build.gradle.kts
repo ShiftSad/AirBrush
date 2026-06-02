@@ -14,7 +14,7 @@ java {
 }
 
 val packResourcePack by tasks.registering(Zip::class) {
-    archiveFileName = "witchcraft-resourcepack.zip"
+    archiveFileName = "airbrush-resourcepack.zip"
     destinationDirectory = layout.buildDirectory.dir("generated/resourcepack")
     from(rootProject.layout.projectDirectory.dir("resourcepack"))
     isReproducibleFileOrder = true

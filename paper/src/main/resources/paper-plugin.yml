@@ -1,9 +1,9 @@
-name: WitchCraft
+name: AirBrush
 version: '${version}'
 
-main: br.com.vrosa.witchcraft.paper.WitchCraft
-bootstrapper: br.com.vrosa.witchcraft.paper.WitchCraftBootstrap
-loader: br.com.vrosa.witchcraft.paper.WitchCraftLoader
+main: br.com.vrosa.airbrush.paper.AirBrush
+bootstrapper: br.com.vrosa.airbrush.paper.AirBrushBootstrap
+loader: br.com.vrosa.airbrush.paper.AirBrushLoader
 api-version: '26.1.2'
 load: POSTWORLD
 

@@ -1,4 +1,4 @@
-rootProject.name = "WitchCraft"
+rootProject.name = "AirBrush"
 
 include("common")
 include("paper")

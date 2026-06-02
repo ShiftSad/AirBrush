@@ -19,7 +19,7 @@ java {
     toolchain.vendor = JvmVendorSpec.JETBRAINS
 }
 
-val mainClassName = "br.com.vrosa.witchcraft.minestom.WitchCraftServer"
+val mainClassName = "br.com.vrosa.airbrush.minestom.AirBrushServer"
 
 tasks {
     build {
