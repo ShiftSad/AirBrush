@@ -91,6 +91,10 @@ public final class AirBrushServer {
             if (event.getHand() == PlayerHand.MAIN) dispatchLeft(engine, event.getPlayer());
         });
 
+        events.addListener(PlayerBlockBreakEvent.class, event -> {
+            if (MinestomPlayer.of(event.getPlayer()).holdingAnyTool()) event.setCancelled(true);
+        });
+
         events.addListener(PlayerChangeHeldSlotEvent.class, event -> {
             final var player = event.getPlayer();
             if (!player.isSneaking()) return;

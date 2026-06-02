@@ -16,9 +16,12 @@ import java.util.UUID;
 
 public final class ColorService {
 
+    private static final long REOPEN_COOLDOWN_MS = 500;
+
     private final Platform platform;
     private final DrawService drawService;
     private final Map<UUID, ColorPicker> pickers = new HashMap<>();
+    private final Map<UUID, Long> closedAt = new HashMap<>();
 
     public ColorService(@NotNull Platform platform, @NotNull DrawService drawService) {
         this.platform = platform;
@@ -32,7 +35,8 @@ public final class ColorService {
     public void rightClick(@NotNull WPlayer player) {
         final var picker = pickers.get(player.uuid());
         if (picker == null) {
-            open(player);
+            final var closed = closedAt.get(player.uuid());
+            if (closed == null || System.currentTimeMillis() - closed >= REOPEN_COOLDOWN_MS) open(player);
             return;
         }
 
@@ -51,7 +55,10 @@ public final class ColorService {
 
     public void close(@NotNull WPlayer player) {
         final var picker = pickers.remove(player.uuid());
-        if (picker != null) picker.despawn();
+        if (picker != null) {
+            picker.despawn();
+            closedAt.put(player.uuid(), System.currentTimeMillis());
+        }
     }
 
     public void tick(@NotNull WPlayer player) {
