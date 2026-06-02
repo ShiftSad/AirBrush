@@ -8,7 +8,7 @@ pick any color, and build it together with friends.
 [![Download on Modrinth](https://img.shields.io/badge/Modrinth-Download-007EC1?style=for-the-badge&logo=modrinth&logoColor=white&labelColor=002F4D)](https://modrinth.com/plugin/AirBrush)
 [![Join the Discord](https://img.shields.io/badge/Discord-Support-007EC1?style=for-the-badge&logo=discord&logoColor=white&labelColor=002F4D)](https://discord.gg/JQVdVqyfDY)
 
-<video src="https://github.com/ShiftSad/AirBrush/raw/refs/heads/master/docs/videos/showcase.mp4" width="100%" controls></video>
+https://github.com/user-attachments/assets/78c49754-6dba-4782-b847-a3f73eb60b47
 
 </div>
 
