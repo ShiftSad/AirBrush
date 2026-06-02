@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "witchcraft:item/pallet"
+    "layer0": "witchcraft:item/palette"
   }
 }

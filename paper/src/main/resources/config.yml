@@ -13,3 +13,8 @@ eraser:
   min-radius: 0.125
   max-radius: 4.0
   radius-step: 0.125
+
+resource-pack:
+  enabled: true
+  ip: 127.0.0.1
+  port: 8080

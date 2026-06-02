@@ -3,6 +3,7 @@ package br.com.vrosa.witchcraft.minestom;
 import br.com.vrosa.witchcraft.core.WitchCraftEngine;
 import br.com.vrosa.witchcraft.core.config.WitchCraftConfig;
 import br.com.vrosa.witchcraft.core.i18n.Messages;
+import br.com.vrosa.witchcraft.core.resourcepack.ResourcePackService;
 import br.com.vrosa.witchcraft.minestom.commands.ColorCommand;
 import br.com.vrosa.witchcraft.minestom.commands.ItemCommand;
 import br.com.vrosa.witchcraft.minestom.commands.UndoCommand;
@@ -46,7 +47,11 @@ public final class WitchCraftServer {
         final var engine = new WitchCraftEngine(
                 new MinestomPlatform(), new MinestomRaycaster(config::maxRaycastLength), config);
 
-        registerEvents(instance, engine);
+        final var resourcePack = new ResourcePackService(config);
+        resourcePack.start();
+        MinecraftServer.getSchedulerManager().buildShutdownTask(resourcePack::stop);
+
+        registerEvents(instance, engine, resourcePack);
         registerCommands(engine, () -> {
             MinestomConfig.load(config);
             Messages.load(Path.of("lang"));
@@ -57,7 +62,7 @@ public final class WitchCraftServer {
         System.out.println("WitchCraft Minestom server iniciado em 0.0.0.0:25565");
     }
 
-    private static void registerEvents(Instance instance, WitchCraftEngine engine) {
+    private static void registerEvents(Instance instance, WitchCraftEngine engine, ResourcePackService resourcePack) {
         final var events = MinecraftServer.getGlobalEventHandler();
 
         events.addListener(AsyncPlayerConfigurationEvent.class, event -> {
@@ -70,9 +75,10 @@ public final class WitchCraftServer {
             final var player = event.getPlayer();
             player.setGameMode(GameMode.CREATIVE);
             final var wp = MinestomPlayer.of(player);
+            resourcePack.apply(wp);
             wp.giveTool(ToolType.PENCIL);
             wp.giveTool(ToolType.ERASER);
-            wp.giveTool(ToolType.PALLET);
+            wp.giveTool(ToolType.PALETTE);
         });
 
         events.addListener(PlayerDisconnectEvent.class,
@@ -110,7 +116,7 @@ public final class WitchCraftServer {
                 if (player.isSneaking()) engine.eraserService().cycleMode(wp);
                 else engine.eraserService().toggleErasing(wp);
             }
-            case PALLET -> engine.colorService().rightClick(wp);
+            case PALETTE -> engine.colorService().rightClick(wp);
         }
     }
 
@@ -120,7 +126,7 @@ public final class WitchCraftServer {
         if (tool == null) return;
         switch (tool) {
             case PENCIL -> engine.drawService().handlePencil(wp, false);
-            case PALLET -> {
+            case PALETTE -> {
                 if (engine.colorService().isOpen(wp)) engine.colorService().close(wp);
             }
             case ERASER -> { }

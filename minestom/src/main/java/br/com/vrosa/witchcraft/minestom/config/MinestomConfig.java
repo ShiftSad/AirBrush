@@ -48,6 +48,19 @@ public final class MinestomConfig {
                     return fallback;
                 }
             }
+
+            @Override
+            public boolean getBoolean(@NotNull String key, boolean fallback) {
+                final var value = properties.getProperty(key);
+                if (value == null) return fallback;
+                return Boolean.parseBoolean(value.trim());
+            }
+
+            @Override
+            public @NotNull String getString(@NotNull String key, @NotNull String fallback) {
+                final var value = properties.getProperty(key);
+                return value == null ? fallback : value.trim();
+            }
         });
     }
 

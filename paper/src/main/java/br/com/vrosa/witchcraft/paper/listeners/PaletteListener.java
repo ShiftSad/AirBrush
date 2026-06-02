@@ -11,18 +11,18 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
-public final class PalletListener implements Listener {
+public final class PaletteListener implements Listener {
 
     private final ColorService service;
 
-    public PalletListener(@NotNull ColorService service) {
+    public PaletteListener(@NotNull ColorService service) {
         this.service = service;
     }
 
     @EventHandler
     public void onInteract(@NotNull PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
-        if (ItemFactory.toolOf(event.getItem()) != ToolType.PALLET) return;
+        if (ItemFactory.toolOf(event.getItem()) != ToolType.PALETTE) return;
 
         final var action = event.getAction();
         final boolean right = action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK;

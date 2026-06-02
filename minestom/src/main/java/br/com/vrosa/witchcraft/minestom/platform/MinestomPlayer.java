@@ -1,11 +1,14 @@
 package br.com.vrosa.witchcraft.minestom.platform;
 
 import br.com.vrosa.witchcraft.minestom.item.MinestomItems;
+import br.com.vrosa.witchcraft.platform.ResourcePackPrompt;
 import br.com.vrosa.witchcraft.platform.ToolType;
 import br.com.vrosa.witchcraft.platform.Vec3;
 import br.com.vrosa.witchcraft.platform.WPlayer;
 import br.com.vrosa.witchcraft.platform.WorldRef;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.resource.ResourcePackInfo;
+import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;
@@ -13,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.net.URI;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -88,5 +92,13 @@ public record MinestomPlayer(@NotNull Player handle) implements WPlayer {
     @Override
     public void playSound(@NotNull Key sound, float volume, float pitch) {
         handle.playSound(Sound.sound(sound, Sound.Source.MASTER, volume, pitch));
+    }
+
+    @Override
+    public void sendResourcePack(@NotNull ResourcePackPrompt prompt) {
+        handle.sendResourcePacks(ResourcePackRequest.resourcePackRequest()
+                .packs(ResourcePackInfo.resourcePackInfo(prompt.id(), URI.create(prompt.url()), prompt.hash()))
+                .required(prompt.required())
+                .build());
     }
 }

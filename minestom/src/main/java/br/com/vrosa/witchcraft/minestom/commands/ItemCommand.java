@@ -18,7 +18,7 @@ public final class ItemCommand extends Command {
     public ItemCommand() {
         super("drawitem");
 
-        final var item = ArgumentType.Word("item").from("pencil", "eraser", "pallet");
+        final var item = ArgumentType.Word("item").from("pencil", "eraser", "palette");
         addSyntax((sender, ctx) -> execute(sender, ctx.get(item)), item);
     }
 

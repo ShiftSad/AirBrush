@@ -14,6 +14,16 @@ public final class WitchCraftConfig {
         public int getInt(@NotNull String key, int fallback) {
             return fallback;
         }
+
+        @Override
+        public boolean getBoolean(@NotNull String key, boolean fallback) {
+            return fallback;
+        }
+
+        @Override
+        public @NotNull String getString(@NotNull String key, @NotNull String fallback) {
+            return fallback;
+        }
     };
 
     private double maxRaycastLength;
@@ -29,6 +39,10 @@ public final class WitchCraftConfig {
     private double eraserMinRadius;
     private double eraserMaxRadius;
     private double eraserRadiusStep;
+
+    private boolean resourcePackEnabled;
+    private String resourcePackIp;
+    private int resourcePackPort;
 
     public WitchCraftConfig() {
         load(DEFAULTS);
@@ -48,6 +62,10 @@ public final class WitchCraftConfig {
         eraserMinRadius = source.getDouble("eraser.min-radius", 0.125);
         eraserMaxRadius = source.getDouble("eraser.max-radius", 4.0);
         eraserRadiusStep = source.getDouble("eraser.radius-step", 0.125);
+
+        resourcePackEnabled = source.getBoolean("resource-pack.enabled", true);
+        resourcePackIp = source.getString("resource-pack.ip", "127.0.0.1");
+        resourcePackPort = source.getInt("resource-pack.port", 8080);
     }
 
     public double maxRaycastLength() {
@@ -92,5 +110,17 @@ public final class WitchCraftConfig {
 
     public double eraserRadiusStep() {
         return eraserRadiusStep;
+    }
+
+    public boolean resourcePackEnabled() {
+        return resourcePackEnabled;
+    }
+
+    public String resourcePackIp() {
+        return resourcePackIp;
+    }
+
+    public int resourcePackPort() {
+        return resourcePackPort;
     }
 }

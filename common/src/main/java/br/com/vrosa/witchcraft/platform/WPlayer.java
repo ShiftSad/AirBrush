@@ -36,4 +36,6 @@ public interface WPlayer {
     void message(@NotNull Component message);
 
     void playSound(@NotNull Key sound, float volume, float pitch);
+
+    void sendResourcePack(@NotNull ResourcePackPrompt prompt);
 }

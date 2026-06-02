@@ -20,6 +20,16 @@ public final class PaperConfig {
             public int getInt(@NotNull String key, int fallback) {
                 return yaml.getInt(key, fallback);
             }
+
+            @Override
+            public boolean getBoolean(@NotNull String key, boolean fallback) {
+                return yaml.getBoolean(key, fallback);
+            }
+
+            @Override
+            public @NotNull String getString(@NotNull String key, @NotNull String fallback) {
+                return yaml.getString(key, fallback);
+            }
         });
     }
 }

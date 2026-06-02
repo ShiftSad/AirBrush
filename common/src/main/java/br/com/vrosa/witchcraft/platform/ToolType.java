@@ -9,7 +9,7 @@ public enum ToolType {
 
     PENCIL("pencil", NamedTextColor.YELLOW),
     ERASER("eraser", NamedTextColor.GRAY),
-    PALLET("pallet", TextColor.color(0x55FFFF));
+    PALETTE("palette", TextColor.color(0x55FFFF));
 
     private final String id;
     private final TextColor color;

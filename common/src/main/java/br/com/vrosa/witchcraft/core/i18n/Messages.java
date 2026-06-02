@@ -18,7 +18,7 @@ public final class Messages {
     public enum Key {
         PENCIL("pencil"),
         ERASER("eraser"),
-        PALLET("pallet"),
+        PALETTE("palette"),
         COLOR("color"),
         THICKNESS("thickness"),
         ERASER_AREA("eraser.area"),
@@ -80,7 +80,7 @@ public final class Messages {
         return switch (tool) {
             case PENCIL -> get(locale, Key.PENCIL);
             case ERASER -> get(locale, Key.ERASER);
-            case PALLET -> get(locale, Key.PALLET);
+            case PALETTE -> get(locale, Key.PALETTE);
         };
     }
 
