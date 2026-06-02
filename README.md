@@ -2,8 +2,8 @@
 
 # AirBrush
 
-**Draw in the air.** A 3D pen for Paper server. Paint freehand on any surface,
-pick any color, and build it together with friends.
+A 3D pen for Paper server. Paint freehand on any surface, pick any color, 
+and build it together with friends.
 
 [![Download on Modrinth](https://img.shields.io/badge/Modrinth-Download-007EC1?style=for-the-badge&logo=modrinth&logoColor=white&labelColor=002F4D)](https://modrinth.com/plugin/AirBrush)
 [![Join the Discord](https://img.shields.io/badge/Discord-Support-007EC1?style=for-the-badge&logo=discord&logoColor=white&labelColor=002F4D)](https://discord.gg/JQVdVqyfDY)
