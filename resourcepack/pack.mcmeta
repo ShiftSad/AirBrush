@@ -1,7 +1,6 @@
 {
   "pack": {
     "description": "you can draw!",
-    "min_format": [73, 0],
-    "max_format": [200, 0]
+    "pack_format": 46
   }
 }

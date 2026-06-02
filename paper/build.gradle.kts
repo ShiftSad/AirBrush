@@ -11,8 +11,7 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(25)
-    toolchain.vendor = JvmVendorSpec.JETBRAINS
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 
 tasks {
@@ -20,12 +19,24 @@ tasks {
         dependsOn(shadowJar)
     }
 
+    jar {
+        enabled = false
+    }
+
+    shadowJar {
+        archiveBaseName = "AirBrush"
+        archiveClassifier = ""
+    }
+
     runServer {
         minecraftVersion(libs.versions.minecraft.get())
+        downloadPlugins {
+            // Lets clients on newer protocol versions join the 1.21.4 dev server.
+            modrinth("viaversion", "5.9.1")
+        }
         jvmArgs(
             "-Xms2G", "-Xmx2G",
             "-Dcom.mojang.eula.agree=true",
-            "-XX:+AllowEnhancedClassRedefinition"
         )
     }
 

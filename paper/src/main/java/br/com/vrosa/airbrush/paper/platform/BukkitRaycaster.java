@@ -4,8 +4,6 @@ import br.com.vrosa.airbrush.platform.AbstractRaycaster;
 import br.com.vrosa.airbrush.platform.Pose;
 import br.com.vrosa.airbrush.platform.Vec3;
 import br.com.vrosa.airbrush.platform.WPlayer;
-import io.papermc.paper.raytracing.BlockCollisionMode;
-import io.papermc.paper.raytracing.RayTraceTarget;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Particle;
 import org.bukkit.util.Vector;
@@ -27,14 +25,8 @@ public final class BukkitRaycaster extends AbstractRaycaster {
         final var eye = handle.getEyeLocation();
         final var world = handle.getWorld();
 
-        final var trace = world.rayTrace(builder -> {
-            builder.blockCollisionMode(BlockCollisionMode.OUTLINE);
-            builder.fluidCollisionMode(FluidCollisionMode.ALWAYS);
-            builder.direction(eye.getDirection());
-            builder.maxDistance(maxDistance());
-            builder.targets(RayTraceTarget.BLOCK);
-            builder.start(eye);
-        });
+        final var trace = world.rayTraceBlocks(
+                eye, eye.getDirection(), maxDistance(), FluidCollisionMode.ALWAYS, false);
         if (trace == null) return null;
 
         final var hit = trace.getHitPosition();

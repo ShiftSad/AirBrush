@@ -1,6 +1,6 @@
 [versions]
-paper-api = "26.1.2.build.+"
-minecraft = "26.1.2"
+paper-api = "1.21.4-R0.1-SNAPSHOT"
+minecraft = "1.21.4"
 
 paperweight-userdev = "2.0.0-beta.21"
 shadow = "9.4.2"

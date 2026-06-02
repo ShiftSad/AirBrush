@@ -15,6 +15,8 @@ dependencies {
 }
 
 java {
+    // Minestom 2026.x requires Java 25 — this module is an independent 26.x server,
+    // unaffected by the Paper backport to 1.21.4 (which runs on Java 21).
     toolchain.languageVersion = JavaLanguageVersion.of(25)
     toolchain.vendor = JvmVendorSpec.JETBRAINS
 }

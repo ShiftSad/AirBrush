@@ -4,7 +4,7 @@ version: '${version}'
 main: br.com.vrosa.airbrush.paper.AirBrush
 bootstrapper: br.com.vrosa.airbrush.paper.AirBrushBootstrap
 loader: br.com.vrosa.airbrush.paper.AirBrushLoader
-api-version: '26.1.2'
+api-version: '1.21.4'
 load: POSTWORLD
 
 authors: [ ShiftSad ]

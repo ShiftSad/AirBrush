@@ -126,7 +126,7 @@ public final class EraserService {
                     hits.stream().map(SegmentHandle::strokeId).filter(Objects::nonNull).collect(Collectors.toSet()));
         };
 
-        final var buffer = buffers.computeIfAbsent(player.uuid(), _ -> new ArrayList<>());
+        final var buffer = buffers.computeIfAbsent(player.uuid(), id -> new ArrayList<>());
         for (final var display : targets) {
             if (!display.isValid()) continue;
             buffer.add(display.snapshot());

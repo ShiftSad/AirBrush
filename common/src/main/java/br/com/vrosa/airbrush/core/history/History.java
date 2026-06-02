@@ -18,7 +18,7 @@ public final class History {
     }
 
     public void record(@NotNull WPlayer player, @NotNull Change change) {
-        final var stack = changes.computeIfAbsent(player.uuid(), _ -> new ArrayDeque<>());
+        final var stack = changes.computeIfAbsent(player.uuid(), id -> new ArrayDeque<>());
         stack.push(change);
         while (stack.size() > MAX_CHANGES) stack.removeLast();
     }

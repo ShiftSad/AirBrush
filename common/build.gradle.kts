@@ -9,8 +9,7 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(25)
-    toolchain.vendor = JvmVendorSpec.JETBRAINS
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 
 val packResourcePack by tasks.registering(Zip::class) {
