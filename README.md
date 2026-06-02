@@ -32,6 +32,9 @@ on the fly, and undo when you inevitably mess up.
 
 ## Installation
 
+Drop the jar into your server's `plugins/` folder and start it up. The plugin
+hosts the resource pack itself over a small built-in HTTP server.
+
 Grab your tools in-game with `/drawitem`:
 
 ```
@@ -71,3 +74,7 @@ Grab your tools in-game with `/drawitem`:
 
 Something broken or want to share what you made? Hop into the
 [Discord](https://discord.gg/JQVdVqyfDY).
+
+## License
+
+AirBrush is licensed under the [GNU General Public License v3.0](LICENSE).

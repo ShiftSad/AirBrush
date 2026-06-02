@@ -16,5 +16,10 @@ eraser:
 
 resource-pack:
   enabled: true
+  # IMPORTANT: this is the address players' clients will connect to in order to
+  # download the resource pack. The default 127.0.0.1 only works when the player
+  # is on the SAME machine as the server (i.e. local testing). On a real server
+  # you MUST set this to the server's public IP or hostname, otherwise players
+  # will fail to download the pack.
   ip: 127.0.0.1
   port: 8080
