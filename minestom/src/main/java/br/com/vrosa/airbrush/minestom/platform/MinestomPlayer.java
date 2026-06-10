@@ -11,7 +11,10 @@ import net.kyori.adventure.resource.ResourcePackInfo;
 import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.Player;
+import net.minestom.server.item.ItemStack;
+import net.minestom.server.sound.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -77,6 +80,38 @@ public record MinestomPlayer(@NotNull Player handle) implements WPlayer {
     @Override
     public void giveTool(@NotNull ToolType tool) {
         handle.getInventory().addItemStack(MinestomItems.tool(tool, locale()));
+    }
+
+    @Override
+    public void damageHeldItem(int amount) {
+        final var item = handle.getItemInMainHand();
+        final int max = item.get(DataComponents.MAX_DAMAGE, 0);
+        if (max <= 0) return;
+
+        final int damage = item.get(DataComponents.DAMAGE, 0) + amount;
+        if (damage >= max) {
+            handle.setItemInMainHand(ItemStack.AIR);
+            handle.playSound(Sound.sound(SoundEvent.ENTITY_ITEM_BREAK, Sound.Source.PLAYER, 1f, 1f));
+        } else {
+            handle.setItemInMainHand(item.with(DataComponents.DAMAGE, damage));
+        }
+    }
+
+    @Override
+    public void repairHeldItem(int amount) {
+        final var item = handle.getItemInMainHand();
+        if (item.get(DataComponents.MAX_DAMAGE, 0) <= 0) return;
+
+        final int damage = Math.max(0, item.get(DataComponents.DAMAGE, 0) - amount);
+        handle.setItemInMainHand(item.with(DataComponents.DAMAGE, damage));
+    }
+
+    @Override
+    public int heldItemDurability() {
+        final var item = handle.getItemInMainHand();
+        final int max = item.get(DataComponents.MAX_DAMAGE, 0);
+        if (max <= 0) return 0;
+        return Math.max(0, max - item.get(DataComponents.DAMAGE, 0));
     }
 
     @Override

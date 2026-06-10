@@ -111,7 +111,7 @@ public final class DrawService {
 
         final double spacing = s.width * SPACING_PER_WIDTH;
         if (last.position().distanceSquared(pointer.position()) >= spacing * spacing) {
-            final var seg = renderer.spawn(last.world(), last.position(), false, s.rgb);
+            final var seg = renderer.spawn(last.world(), last.position(), false, s.rgb, false);
             renderer.orient(seg, last, pointer.position(), s.width);
             s.preview.add(seg);
             s.samples.add(pointer.copy());
@@ -121,7 +121,7 @@ public final class DrawService {
         }
 
         if (s.rubberband == null || !s.rubberband.isValid()) {
-            s.rubberband = renderer.spawn(last.world(), last.position(), false, s.rgb);
+            s.rubberband = renderer.spawn(last.world(), last.position(), false, s.rgb, false);
         }
         renderer.orient(s.rubberband, last, pointer.position(), s.width);
     }
@@ -176,7 +176,7 @@ public final class DrawService {
     private void startStraight(@NotNull WPlayer player, @NotNull Pose pointer) {
         final var s = new DrawSession(DrawMode.STRAIGHT, colorOf(player), (float) radiusOf(player));
         s.anchor = pointer.copy();
-        s.rubberband = renderer.spawn(pointer.world(), s.anchor.position(), false, s.rgb);
+        s.rubberband = renderer.spawn(pointer.world(), s.anchor.position(), false, s.rgb, false);
         sessions.put(player.uuid(), s);
     }
 
@@ -186,7 +186,7 @@ public final class DrawService {
         s.rubberband.tag(s.strokeId, UUID.randomUUID(), s.rgb);
         s.committed.add(s.rubberband);
         s.anchor = pointer.copy();
-        s.rubberband = renderer.spawn(s.anchor.world(), s.anchor.position(), false, s.rgb);
+        s.rubberband = renderer.spawn(s.anchor.world(), s.anchor.position(), false, s.rgb, false);
     }
 
     private void finishStraight(@NotNull WPlayer player, @NotNull DrawSession s) {

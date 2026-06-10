@@ -9,6 +9,7 @@ import br.com.vrosa.airbrush.minestom.commands.ItemCommand;
 import br.com.vrosa.airbrush.minestom.commands.UndoCommand;
 import br.com.vrosa.airbrush.minestom.commands.AirBrushCommand;
 import br.com.vrosa.airbrush.minestom.config.MinestomConfig;
+import br.com.vrosa.airbrush.minestom.item.HammerMechanic;
 import br.com.vrosa.airbrush.minestom.item.MinestomItems;
 import br.com.vrosa.airbrush.minestom.platform.MinestomPlatform;
 import br.com.vrosa.airbrush.minestom.platform.MinestomPlayer;
@@ -19,8 +20,11 @@ import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
+import net.minestom.server.entity.ItemEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
+import net.minestom.server.event.item.ItemDropEvent;
+import net.minestom.server.event.item.PickupItemEvent;
 import net.minestom.server.event.player.*;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.LightingChunk;
@@ -28,6 +32,7 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.timer.TaskSchedule;
 
 import java.nio.file.Path;
+import java.time.Duration;
 
 public final class AirBrushServer {
 
@@ -81,18 +86,42 @@ public final class AirBrushServer {
             wp.giveTool(ToolType.PALETTE);
         });
 
-        events.addListener(PlayerDisconnectEvent.class,
-                event -> engine.handleQuit(MinestomPlayer.of(event.getPlayer())));
+        events.addListener(PlayerDisconnectEvent.class, event -> {
+            engine.handleQuit(MinestomPlayer.of(event.getPlayer()));
+            HammerMechanic.forget(event.getPlayer());
+        });
 
         events.addListener(PlayerUseItemEvent.class, event -> dispatchRight(engine, event.getPlayer()));
         events.addListener(PlayerBlockInteractEvent.class, event -> dispatchRight(engine, event.getPlayer()));
 
         events.addListener(PlayerHandAnimationEvent.class, event -> {
-            if (event.getHand() == PlayerHand.MAIN) dispatchLeft(engine, event.getPlayer());
+            if (event.getHand() != PlayerHand.MAIN) return;
+            if (HammerMechanic.punch(event.getPlayer())) return;
+            dispatchLeft(engine, event.getPlayer());
+        });
+
+        events.addListener(ItemDropEvent.class, event -> {
+            final var player = event.getPlayer();
+            final var drop = new ItemEntity(event.getItemStack());
+            drop.setPickupDelay(Duration.ofSeconds(2));
+            drop.setInstance(event.getInstance(), player.getPosition().add(0, player.getEyeHeight() - 0.3, 0));
+            drop.setVelocity(player.getPosition().direction().mul(6));
+        });
+
+        events.addListener(PickupItemEvent.class, event -> {
+            if (!(event.getLivingEntity() instanceof Player player)
+                    || !player.getInventory().addItemStack(event.getItemStack())) {
+                event.setCancelled(true);
+            }
         });
 
         events.addListener(PlayerBlockBreakEvent.class, event -> {
-            if (MinestomPlayer.of(event.getPlayer()).holdingAnyTool()) event.setCancelled(true);
+            if (MinestomPlayer.of(event.getPlayer()).holdingAnyTool()
+                    || HammerMechanic.justTransformed(event.getPlayer())) {
+                event.setCancelled(true);
+                return;
+            }
+            HammerMechanic.handleBlockBreak(event.getPlayer(), event.getBlock());
         });
 
         events.addListener(PlayerChangeHeldSlotEvent.class, event -> {
@@ -116,6 +145,7 @@ public final class AirBrushServer {
         if (tool == null) return;
         switch (tool) {
             case PENCIL -> engine.drawService().handlePencil(wp, true);
+            case MARKER -> engine.markerService().handleMarker(wp, true);
             case ERASER -> {
                 if (player.isSneaking()) engine.eraserService().cycleMode(wp);
                 else engine.eraserService().toggleErasing(wp);
@@ -130,6 +160,7 @@ public final class AirBrushServer {
         if (tool == null) return;
         switch (tool) {
             case PENCIL -> engine.drawService().handlePencil(wp, false);
+            case MARKER -> engine.markerService().handleMarker(wp, false);
             case PALETTE -> {
                 if (engine.colorService().isOpen(wp)) engine.colorService().close(wp);
             }
@@ -150,6 +181,7 @@ public final class AirBrushServer {
             for (final var player : instance.getPlayers()) {
                 engine.tick(MinestomPlayer.of(player));
             }
+            engine.tickSegments();
         }).repeat(TaskSchedule.tick(1)).schedule();
     }
 

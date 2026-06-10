@@ -22,8 +22,8 @@ import java.util.UUID;
 public final class MinestomPlatform implements Platform {
 
     @Override
-    public @NotNull SegmentHandle spawnSegment(@NotNull WorldRef world, @NotNull Vec3 at, int rgb, boolean persistent) {
-        return new MinestomSegment(itemDisplay(world, at, MinestomItems.segment(rgb), Transform.empty()));
+    public @NotNull SegmentHandle spawnSegment(@NotNull WorldRef world, @NotNull Vec3 at, int rgb, boolean persistent, boolean bright) {
+        return new MinestomSegment(itemDisplay(world, at, MinestomItems.segment(rgb, bright), Transform.empty()));
     }
 
     @Override
@@ -82,7 +82,7 @@ public final class MinestomPlatform implements Platform {
     @Override
     public @NotNull SegmentHandle restore(@NotNull SegmentSnapshot snapshot) {
         final var entity = itemDisplay(snapshot.world(), snapshot.position(),
-                MinestomItems.segment(snapshot.rgb()), snapshot.transform());
+                MinestomItems.segment(snapshot.rgb(), false), snapshot.transform());
         final var segment = new MinestomSegment(entity);
         segment.tag(snapshot.strokeId(), snapshot.segmentId(), snapshot.rgb());
         return segment;

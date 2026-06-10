@@ -22,8 +22,8 @@ public final class SegmentRenderer {
         this.config = config;
     }
 
-    public @NotNull SegmentHandle spawn(@NotNull WorldRef world, @NotNull Vec3 at, boolean persistent, int rgb) {
-        return platform.spawnSegment(world, at, rgb, persistent);
+    public @NotNull SegmentHandle spawn(@NotNull WorldRef world, @NotNull Vec3 at, boolean persistent, int rgb, boolean bright) {
+        return platform.spawnSegment(world, at, rgb, persistent, bright);
     }
 
     public void orient(@NotNull SegmentHandle display, @NotNull Pose from, @NotNull Vec3 to, float width) {
@@ -36,9 +36,16 @@ public final class SegmentRenderer {
 
     public void drawPermanent(@NotNull Pose from, @NotNull Vec3 to, int rgb,
                               @NotNull UUID strokeId, @NotNull UUID segmentId, float width) {
-        final var display = platform.spawnSegment(from.world(), from.position(), rgb, true);
+        draw(from, to, rgb, strokeId, segmentId, width, true, false);
+    }
+
+    public @NotNull SegmentHandle draw(@NotNull Pose from, @NotNull Vec3 to, int rgb,
+                                       @NotNull UUID strokeId, @NotNull UUID segmentId, float width,
+                                       boolean persistent, boolean bright) {
+        final var display = platform.spawnSegment(from.world(), from.position(), rgb, persistent, bright);
         display.setTransform(transform(from.position(), to, from.normal(), width));
         display.tag(strokeId, segmentId, rgb);
+        return display;
     }
 
     private @NotNull Transform transform(@NotNull Vec3 from, @NotNull Vec3 to, @NotNull Vector3f normal, float width) {

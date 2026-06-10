@@ -1,7 +1,9 @@
 package br.com.vrosa.airbrush.paper.commands;
 
 import br.com.vrosa.airbrush.core.i18n.Messages;
+import br.com.vrosa.airbrush.paper.item.ItemFactory;
 import br.com.vrosa.airbrush.paper.platform.BukkitPlayer;
+import br.com.vrosa.airbrush.platform.Hammer;
 import br.com.vrosa.airbrush.platform.ToolType;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -38,13 +40,17 @@ public final class ItemCommand {
         }
 
         final var locale = player.locale();
-        final var tool = ToolType.byId(StringArgumentType.getString(context, "item").toLowerCase(Locale.ROOT));
-        if (tool == null) {
+        final var id = StringArgumentType.getString(context, "item").toLowerCase(Locale.ROOT);
+        final var tool = ToolType.byId(id);
+        if (tool != null) {
+            BukkitPlayer.of(player).giveTool(tool);
+        } else if (Hammer.ID.equals(id)) {
+            player.getInventory().addItem(ItemFactory.hammer());
+        } else {
             player.sendMessage(Component.text(Messages.get(locale, Messages.Key.DRAWITEM_INVALID), NamedTextColor.RED));
             return 0;
         }
 
-        BukkitPlayer.of(player).giveTool(tool);
         player.sendMessage(Component.text(Messages.get(locale, Messages.Key.DRAWITEM_GIVEN), NamedTextColor.GREEN));
         return Command.SINGLE_SUCCESS;
     }
@@ -55,6 +61,7 @@ public final class ItemCommand {
         for (final var tool : ToolType.values()) {
             if (tool.id().startsWith(input)) builder.suggest(tool.id());
         }
+        if (Hammer.ID.startsWith(input)) builder.suggest(Hammer.ID);
         return builder.buildFuture();
     }
 }

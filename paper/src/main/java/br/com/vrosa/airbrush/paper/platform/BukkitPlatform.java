@@ -22,8 +22,8 @@ public final class BukkitPlatform implements Platform {
     private static final Display.Brightness FULL_BRIGHT = new Display.Brightness(15, 15);
 
     @Override
-    public @NotNull SegmentHandle spawnSegment(@NotNull WorldRef world, @NotNull Vec3 at, int rgb, boolean persistent) {
-        return new BukkitSegment(itemDisplay((BukkitWorld) world, at, Items.segment(rgb), persistent, Transform.empty()));
+    public @NotNull SegmentHandle spawnSegment(@NotNull WorldRef world, @NotNull Vec3 at, int rgb, boolean persistent, boolean bright) {
+        return new BukkitSegment(itemDisplay((BukkitWorld) world, at, Items.segment(rgb, bright), persistent, Transform.empty()));
     }
 
     @Override
@@ -89,7 +89,7 @@ public final class BukkitPlatform implements Platform {
     @Override
     public @NotNull SegmentHandle restore(@NotNull SegmentSnapshot snapshot) {
         final var display = itemDisplay((BukkitWorld) snapshot.world(), snapshot.position(),
-                Items.segment(snapshot.rgb()), true, snapshot.transform());
+                Items.segment(snapshot.rgb(), false), true, snapshot.transform());
         final var segment = new BukkitSegment(display);
         segment.tag(snapshot.strokeId(), snapshot.segmentId(), snapshot.rgb());
         return segment;

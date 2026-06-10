@@ -1,5 +1,6 @@
 plugins {
     id("java-library")
+    id("maven-publish")
 }
 
 dependencies {
@@ -22,4 +23,12 @@ val packResourcePack by tasks.registering(Zip::class) {
 
 tasks.processResources {
     from(packResourcePack)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
 }

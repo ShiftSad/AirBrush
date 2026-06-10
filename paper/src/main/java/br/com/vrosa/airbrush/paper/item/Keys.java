@@ -8,6 +8,8 @@ public final class Keys {
     public static final String NAMESPACE = "airbrush";
 
     public static final NamespacedKey ITEM_TYPE = new NamespacedKey(NAMESPACE, "item_type");
+    public static final NamespacedKey HAMMER_RECIPE = new NamespacedKey(NAMESPACE, "hammer");
+    public static final NamespacedKey HAMMER_MODEL = new NamespacedKey(NAMESPACE, "hammer");
     public static final NamespacedKey STROKE_ID = new NamespacedKey(NAMESPACE, "stroke_id");
     public static final NamespacedKey SEGMENT_ID = new NamespacedKey(NAMESPACE, "segment_id");
     public static final NamespacedKey SEGMENT_COLOR = new NamespacedKey(NAMESPACE, "segment_color");

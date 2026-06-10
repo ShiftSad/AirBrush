@@ -1,7 +1,9 @@
 package br.com.vrosa.airbrush.minestom.commands;
 
 import br.com.vrosa.airbrush.core.i18n.Messages;
+import br.com.vrosa.airbrush.minestom.item.MinestomItems;
 import br.com.vrosa.airbrush.minestom.platform.MinestomPlayer;
+import br.com.vrosa.airbrush.platform.Hammer;
 import br.com.vrosa.airbrush.platform.ToolType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -18,7 +20,7 @@ public final class ItemCommand extends Command {
     public ItemCommand() {
         super("drawitem");
 
-        final var item = ArgumentType.Word("item").from("pencil", "eraser", "palette");
+        final var item = ArgumentType.Word("item").from("pencil", "eraser", "palette", "amethyst_dye", "hammer");
         addSyntax((sender, ctx) -> execute(sender, ctx.get(item)), item);
     }
 
@@ -29,13 +31,17 @@ public final class ItemCommand extends Command {
         }
 
         final var wp = MinestomPlayer.of(player);
-        final var tool = ToolType.byId(id.toLowerCase(Locale.ROOT));
-        if (tool == null) {
+        final var normalized = id.toLowerCase(Locale.ROOT);
+        final var tool = ToolType.byId(normalized);
+        if (tool != null) {
+            wp.giveTool(tool);
+        } else if (Hammer.ID.equals(normalized)) {
+            player.getInventory().addItemStack(MinestomItems.hammer());
+        } else {
             player.sendMessage(Component.text(Messages.get(wp.locale(), Messages.Key.DRAWITEM_INVALID), NamedTextColor.RED));
             return;
         }
 
-        wp.giveTool(tool);
         player.sendMessage(Component.text(Messages.get(wp.locale(), Messages.Key.DRAWITEM_GIVEN), NamedTextColor.GREEN));
     }
 }

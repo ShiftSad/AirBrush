@@ -31,6 +31,12 @@ public interface WPlayer {
 
     void giveTool(@NotNull ToolType tool);
 
+    void damageHeldItem(int amount);
+
+    void repairHeldItem(int amount);
+
+    int heldItemDurability();
+
     void actionBar(@NotNull Component message);
 
     void message(@NotNull Component message);

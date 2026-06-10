@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "airbrush:item/palette"
+    "layer0": "airbrush:item/hammer"
   }
 }

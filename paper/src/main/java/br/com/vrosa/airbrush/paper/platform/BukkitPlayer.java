@@ -12,6 +12,8 @@ import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -75,6 +77,28 @@ public record BukkitPlayer(@NotNull Player handle) implements WPlayer {
     @Override
     public void giveTool(@NotNull ToolType tool) {
         handle.getInventory().addItem(ItemFactory.create(tool, handle.locale()));
+    }
+
+    @Override
+    public void damageHeldItem(int amount) {
+        handle.damageItemStack(EquipmentSlot.HAND, amount);
+    }
+
+    @Override
+    public void repairHeldItem(int amount) {
+        final var item = handle.getInventory().getItemInMainHand();
+        if (!(item.getItemMeta() instanceof Damageable meta)) return;
+        meta.setDamage(Math.max(0, meta.getDamage() - amount));
+        item.setItemMeta(meta);
+        handle.getInventory().setItemInMainHand(item);
+    }
+
+    @Override
+    public int heldItemDurability() {
+        final var item = handle.getInventory().getItemInMainHand();
+        if (!(item.getItemMeta() instanceof Damageable meta)) return 0;
+        final int max = meta.hasMaxDamage() ? meta.getMaxDamage() : item.getType().getMaxDurability();
+        return Math.max(0, max - meta.getDamage());
     }
 
     @Override

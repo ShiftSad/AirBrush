@@ -1,6 +1,7 @@
 package br.com.vrosa.airbrush.paper.listeners;
 
 import br.com.vrosa.airbrush.core.resourcepack.ResourcePackService;
+import br.com.vrosa.airbrush.paper.item.Keys;
 import br.com.vrosa.airbrush.paper.platform.BukkitPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,5 +19,6 @@ public final class JoinListener implements Listener {
     @EventHandler
     public void onJoin(@NotNull PlayerJoinEvent event) {
         resourcePack.apply(BukkitPlayer.of(event.getPlayer()));
+        event.getPlayer().discoverRecipe(Keys.HAMMER_RECIPE);
     }
 }

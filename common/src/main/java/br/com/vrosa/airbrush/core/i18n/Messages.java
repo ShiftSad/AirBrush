@@ -19,6 +19,8 @@ public final class Messages {
         PENCIL("pencil"),
         ERASER("eraser"),
         PALETTE("palette"),
+        MARKER("amethyst_dye"),
+        MARKER_DRY("marker.dry"),
         COLOR("color"),
         THICKNESS("thickness"),
         ERASER_AREA("eraser.area"),
@@ -81,6 +83,7 @@ public final class Messages {
             case PENCIL -> get(locale, Key.PENCIL);
             case ERASER -> get(locale, Key.ERASER);
             case PALETTE -> get(locale, Key.PALETTE);
+            case MARKER -> get(locale, Key.MARKER);
         };
     }
 

@@ -9,9 +9,12 @@ import br.com.vrosa.airbrush.paper.commands.ItemCommand;
 import br.com.vrosa.airbrush.paper.commands.UndoCommand;
 import br.com.vrosa.airbrush.paper.commands.AirBrushCommand;
 import br.com.vrosa.airbrush.paper.config.PaperConfig;
+import br.com.vrosa.airbrush.paper.item.ItemFactory;
 import br.com.vrosa.airbrush.paper.listeners.DrawListener;
 import br.com.vrosa.airbrush.paper.listeners.EraserListener;
+import br.com.vrosa.airbrush.paper.listeners.HammerListener;
 import br.com.vrosa.airbrush.paper.listeners.JoinListener;
+import br.com.vrosa.airbrush.paper.listeners.MarkerListener;
 import br.com.vrosa.airbrush.paper.listeners.PaletteListener;
 import br.com.vrosa.airbrush.paper.listeners.QuitListener;
 import br.com.vrosa.airbrush.paper.platform.BukkitPlatform;
@@ -37,9 +40,13 @@ public final class AirBrush extends JavaPlugin {
         engine = new AirBrushEngine(new BukkitPlatform(), raycaster, config);
         resourcePack.start();
 
+        getServer().addRecipe(ItemFactory.hammerRecipe());
+
         final var pm = getServer().getPluginManager();
         pm.registerEvents(new DrawListener(engine.drawService()), this);
+        pm.registerEvents(new MarkerListener(engine.markerService()), this);
         pm.registerEvents(new EraserListener(engine.eraserService()), this);
+        pm.registerEvents(new HammerListener(), this);
         pm.registerEvents(new PaletteListener(engine.colorService()), this);
         pm.registerEvents(new QuitListener(engine), this);
         pm.registerEvents(new JoinListener(resourcePack), this);
@@ -69,5 +76,6 @@ public final class AirBrush extends JavaPlugin {
         for (final var player : Bukkit.getOnlinePlayers()) {
             engine.tick(BukkitPlayer.of(player));
         }
+        engine.tickSegments();
     }
 }
