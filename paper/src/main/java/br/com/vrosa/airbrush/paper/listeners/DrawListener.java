@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class DrawListener implements Listener {
 
@@ -21,10 +22,12 @@ public final class DrawListener implements Listener {
         this.service = service;
     }
 
+    // No ignoreCancelled: air clicks arrive with useInteractedBlock() == DENY,
+    // which Bukkit reports as a cancelled event.
     @EventHandler
     public void onInteract(@NotNull PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
-        if (ItemFactory.toolOf(event.getItem()) != ToolType.PENCIL) return;
+        if (!isDrawTool(ItemFactory.toolOf(event.getItem()))) return;
 
         final var action = event.getAction();
         final boolean right = action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK;
@@ -36,14 +39,24 @@ public final class DrawListener implements Listener {
     }
 
     @EventHandler
+    public void onSlotChange(@NotNull PlayerItemHeldEvent event) {
+        if (event.getPlayer().isSneaking()) return;
+        service.confirmActive(BukkitPlayer.of(event.getPlayer()));
+    }
+
+    @EventHandler
     public void onScroll(@NotNull PlayerItemHeldEvent event) {
         final var player = event.getPlayer();
         if (!player.isSneaking()) return;
 
         final var held = player.getInventory().getItem(event.getPreviousSlot());
-        if (ItemFactory.toolOf(held) != ToolType.PENCIL) return;
+        if (!isDrawTool(ItemFactory.toolOf(held))) return;
 
         event.setCancelled(true);
         service.changeRadius(BukkitPlayer.of(player), Hotbar.scrollDirection(event.getPreviousSlot(), event.getNewSlot()));
+    }
+
+    private static boolean isDrawTool(@Nullable ToolType tool) {
+        return tool == ToolType.PENCIL || tool == ToolType.QUILL;
     }
 }

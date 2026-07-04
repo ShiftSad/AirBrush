@@ -4,8 +4,10 @@ import br.com.vrosa.airbrush.platform.AbstractRaycaster;
 import br.com.vrosa.airbrush.platform.Pose;
 import br.com.vrosa.airbrush.platform.Vec3;
 import br.com.vrosa.airbrush.platform.WPlayer;
+import br.com.vrosa.airbrush.platform.WorldRef;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Particle;
+import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,14 +28,28 @@ public final class BukkitRaycaster extends AbstractRaycaster {
         final var world = handle.getWorld();
 
         final var trace = world.rayTraceBlocks(
-                eye, eye.getDirection(), maxDistance(), FluidCollisionMode.ALWAYS, false);
-        if (trace == null) return null;
+                eye, eye.getDirection(), maxDistance(player), FluidCollisionMode.ALWAYS, false);
+        return toPose(new BukkitWorld(world), trace, eye.getDirection());
+    }
 
+    @Override
+    public @Nullable Pose project(@NotNull WorldRef world, @NotNull Vec3 origin, @NotNull Vector3f direction,
+                                  double maxDistance) {
+        final var bukkit = (BukkitWorld) world;
+        final var dir = new Vector(direction.x, direction.y, direction.z);
+        final var trace = bukkit.handle().rayTraceBlocks(
+                bukkit.toLocation(origin), dir, maxDistance, FluidCollisionMode.ALWAYS, false);
+        return toPose(bukkit, trace, dir);
+    }
+
+    private static @Nullable Pose toPose(@NotNull BukkitWorld world, @Nullable RayTraceResult trace,
+                                         @NotNull Vector direction) {
+        if (trace == null) return null;
         final var hit = trace.getHitPosition();
         final var face = trace.getHitBlockFace();
-        final Vector normal = face != null ? face.getDirection() : eye.getDirection().multiply(-1);
+        final Vector normal = face != null ? face.getDirection() : direction.clone().multiply(-1);
         return new Pose(
-                new BukkitWorld(world),
+                world,
                 new Vec3(hit.getX(), hit.getY(), hit.getZ()),
                 new Vector3f((float) normal.getX(), (float) normal.getY(), (float) normal.getZ()));
     }

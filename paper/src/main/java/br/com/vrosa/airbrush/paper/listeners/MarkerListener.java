@@ -19,6 +19,8 @@ public final class MarkerListener implements Listener {
         this.service = service;
     }
 
+    // No ignoreCancelled: air clicks arrive with useInteractedBlock() == DENY,
+    // which Bukkit reports as a cancelled event.
     @EventHandler
     public void onInteract(@NotNull PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
@@ -31,5 +33,11 @@ public final class MarkerListener implements Listener {
 
         event.setCancelled(true);
         service.handleMarker(BukkitPlayer.of(event.getPlayer()), right);
+    }
+
+    @EventHandler
+    public void onSlotChange(@NotNull org.bukkit.event.player.PlayerItemHeldEvent event) {
+        if (event.getPlayer().isSneaking()) return;
+        service.confirmActive(BukkitPlayer.of(event.getPlayer()));
     }
 }

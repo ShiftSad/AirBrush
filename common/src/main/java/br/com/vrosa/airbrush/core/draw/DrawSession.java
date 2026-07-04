@@ -18,6 +18,12 @@ final class DrawSession {
     final List<SegmentHandle> committed = new ArrayList<>();
     Pose anchor;
     SegmentHandle rubberband;
+    double inkPending;
+    boolean inkDry;
+    boolean inkPersistent = true;
+    boolean inkBright;
+    /** {@code true} when the session was opened with a quill (charges ink). */
+    boolean quillStroke;
 
     DrawSession(DrawMode mode, int rgb, float width) {
         this.mode = mode;

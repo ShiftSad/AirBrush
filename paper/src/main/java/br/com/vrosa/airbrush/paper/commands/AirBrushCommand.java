@@ -1,6 +1,7 @@
 package br.com.vrosa.airbrush.paper.commands;
 
 import br.com.vrosa.airbrush.core.i18n.Messages;
+import br.com.vrosa.airbrush.platform.Permissions;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -19,7 +20,7 @@ public final class AirBrushCommand {
 
     public static @NotNull LiteralCommandNode<CommandSourceStack> build(@NotNull Runnable reload) {
         return Commands.literal("airbrush")
-                .requires(source -> source.getSender().hasPermission("airbrush.reload"))
+                .requires(source -> source.getSender().hasPermission(Permissions.RELOAD))
                 .then(Commands.literal("reload").executes(ctx -> reload(ctx, reload)))
                 .build();
     }

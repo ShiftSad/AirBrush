@@ -9,6 +9,7 @@ public final class Sounds {
     public static final Key NOTE_BLOCK_HAT = Key.key("block.note_block.hat");
     public static final Key DISPENSER_LAUNCH = Key.key("block.dispenser.launch");
     public static final Key ITEM_FRAME_REMOVE = Key.key("entity.item_frame.remove_item");
+    public static final Key BOTTLE_FILL = Key.key("item.bottle.fill");
 
     private Sounds() {}
 }

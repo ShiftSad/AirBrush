@@ -7,6 +7,16 @@ dependencies {
     compileOnly(libs.adventure.api)
     compileOnly(libs.joml)
     compileOnly(libs.annotations)
+
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.joml)
+    testImplementation(libs.annotations)
+    testImplementation(libs.adventure.api)
+    testRuntimeOnly(libs.junit.platform.launcher)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 java {

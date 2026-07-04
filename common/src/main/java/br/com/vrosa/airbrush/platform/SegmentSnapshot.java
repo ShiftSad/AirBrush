@@ -1,6 +1,7 @@
 package br.com.vrosa.airbrush.platform;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -10,5 +11,8 @@ public record SegmentSnapshot(
         @NotNull Transform transform,
         @NotNull UUID strokeId,
         @NotNull UUID segmentId,
-        int rgb) {
+        int rgb,
+        boolean persistent,
+        boolean bright,
+        @Nullable Vec3 anchor) {
 }

@@ -4,6 +4,8 @@ import br.com.vrosa.airbrush.platform.AbstractRaycaster;
 import br.com.vrosa.airbrush.platform.Pose;
 import br.com.vrosa.airbrush.platform.Vec3;
 import br.com.vrosa.airbrush.platform.WPlayer;
+import br.com.vrosa.airbrush.platform.WorldRef;
+import net.minestom.server.instance.Instance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -24,17 +26,31 @@ public final class MinestomRaycaster extends AbstractRaycaster {
 
         final var eye = handle.getPosition().add(0, handle.getEyeHeight(), 0);
         final var dir = handle.getPosition().direction();
+        return dda(instance, eye.x(), eye.y(), eye.z(), dir.x(), dir.y(), dir.z(), maxDistance(player));
+    }
 
-        final double ox = eye.x();
-        final double oy = eye.y();
-        final double oz = eye.z();
-        final double dx = dir.x();
-        final double dy = dir.y();
-        final double dz = dir.z();
+    @Override
+    public @Nullable Pose project(@NotNull WorldRef world, @NotNull Vec3 origin, @NotNull Vector3f direction,
+                                  double maxDistance) {
+        return dda(((MinestomWorld) world).handle(),
+                origin.x(), origin.y(), origin.z(), direction.x, direction.y, direction.z, maxDistance);
+    }
 
+    private static @Nullable Pose dda(@NotNull Instance instance,
+                                      double ox, double oy, double oz,
+                                      double dx, double dy, double dz, double maxDistance) {
         int x = (int) Math.floor(ox);
         int y = (int) Math.floor(oy);
         int z = (int) Math.floor(oz);
+
+        // Match Paper's rayTraceBlocks: a ray starting inside a solid block hits immediately.
+        if (!instance.getBlock(x, y, z).isAir()) {
+            final double length = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            final var normal = length < 1.0e-9
+                    ? new Vector3f(0f, 1f, 0f)
+                    : new Vector3f((float) (-dx / length), (float) (-dy / length), (float) (-dz / length));
+            return new Pose(new MinestomWorld(instance), new Vec3(ox, oy, oz), normal);
+        }
 
         final int stepX = dx > 0 ? 1 : -1;
         final int stepY = dy > 0 ? 1 : -1;
@@ -48,7 +64,6 @@ public final class MinestomRaycaster extends AbstractRaycaster {
         double tMaxY = dy == 0 ? Double.MAX_VALUE : (stepY > 0 ? (y + 1 - oy) : (oy - y)) * tDeltaY;
         double tMaxZ = dz == 0 ? Double.MAX_VALUE : (stepZ > 0 ? (z + 1 - oz) : (oz - z)) * tDeltaZ;
 
-        final double maxDistance = maxDistance();
         double t = 0;
         int axis;
 

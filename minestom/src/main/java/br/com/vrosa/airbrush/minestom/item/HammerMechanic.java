@@ -1,7 +1,11 @@
 package br.com.vrosa.airbrush.minestom.item;
 
+import br.com.vrosa.airbrush.core.AirBrushEngine;
+import br.com.vrosa.airbrush.core.i18n.Messages;
 import br.com.vrosa.airbrush.minestom.platform.MinestomPlayer;
 import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.ItemEntity;
@@ -32,11 +36,20 @@ public final class HammerMechanic {
 
     private HammerMechanic() {}
 
-    public static boolean punch(@NotNull Player player) {
+    public static boolean punch(@NotNull AirBrushEngine engine, @NotNull Player player) {
         if (!MinestomItems.isHammer(player.getItemInMainHand())) return false;
 
         final var instance = player.getInstance();
         if (instance == null) return false;
+
+        final var wp = MinestomPlayer.of(player);
+        final var pointer = engine.raycaster().cast(wp);
+        if (pointer != null && engine.glyphCraft().attempt(pointer)) {
+            lastTransform.put(player.getUuid(), System.currentTimeMillis());
+            wp.actionBar(Component.text(
+                    Messages.get(wp.locale(), Messages.Key.GLYPH_CRAFT_SUCCESS), NamedTextColor.GREEN));
+            return true;
+        }
 
         final var drop = findTarget(player, instance);
         if (drop == null) return false;

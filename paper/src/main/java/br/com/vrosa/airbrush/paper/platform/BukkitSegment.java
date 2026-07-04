@@ -64,6 +64,28 @@ public final class BukkitSegment implements SegmentHandle {
     }
 
     @Override
+    public void anchor(@NotNull Vec3 block) {
+        display.getPersistentDataContainer().set(Keys.SEGMENT_ANCHOR, PersistentDataType.STRING,
+                (int) block.x() + "_" + (int) block.y() + "_" + (int) block.z());
+    }
+
+    @Override
+    public @Nullable Vec3 anchorBlock() {
+        final var raw = display.getPersistentDataContainer().get(Keys.SEGMENT_ANCHOR, PersistentDataType.STRING);
+        return raw == null ? null : parseAnchor(raw);
+    }
+
+    private static @Nullable Vec3 parseAnchor(@NotNull String raw) {
+        final var parts = raw.split("_");
+        if (parts.length != 3) return null;
+        try {
+            return new Vec3(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    @Override
     public @Nullable UUID strokeId() {
         final var raw = display.getPersistentDataContainer().get(Keys.STROKE_ID, PersistentDataType.STRING);
         return raw == null ? null : UUID.fromString(raw);
@@ -91,6 +113,9 @@ public final class BukkitSegment implements SegmentHandle {
                 Transforms.fromBukkit(display.getTransformation()),
                 stroke == null ? UUID.randomUUID() : stroke,
                 segment == null ? UUID.randomUUID() : segment,
-                color());
+                color(),
+                display.isPersistent(),
+                display.getBrightness() != null,
+                anchorBlock());
     }
 }

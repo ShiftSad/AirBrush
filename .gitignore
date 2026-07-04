@@ -11,6 +11,13 @@ build
 out/
 .idea
 *.iml
+
+# VS Code
+.vscode/
+
+# Runtime files written next to the jar when running locally
+/config.properties
+/lang/
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
@@ -19,3 +26,6 @@ hs_err_pid*
 
 # Common working directory
 run
+
+# MkDocs build output
+site/

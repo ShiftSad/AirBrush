@@ -17,13 +17,20 @@ public abstract class AbstractRaycaster implements Raycaster {
         this.maxDistance = maxDistance;
     }
 
-    protected double maxDistance() {
-        return maxDistance.getAsDouble();
+    protected double maxDistance(@NotNull WPlayer player) {
+        final double base = maxDistance.getAsDouble();
+        if (player.heldTool() != ToolType.QUILL) return base;
+        return base * Quill.rangeMultiplier(player.heldToolTier(), player.heldToolQuality());
     }
 
     @Override
     public @Nullable Pose current(@NotNull WPlayer player) {
         return cache.get(player.uuid());
+    }
+
+    @Override
+    public @Nullable Pose cast(@NotNull WPlayer player) {
+        return trace(player);
     }
 
     @Override

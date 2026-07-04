@@ -40,6 +40,19 @@ public final class AirBrushConfig {
     private double eraserMaxRadius;
     private double eraserRadiusStep;
 
+    private int markerTtlSeconds;
+    private int markerFadeSeconds;
+    private float markerWidth;
+    private double markerBlocksPerDurability;
+
+    private int cauldronChargePerDip;
+    private int cauldronClothChargePerDip;
+    private double clothBlocksPerDurability;
+
+    private double glyphMinRadius;
+    private double glyphMaxRadius;
+    private double glyphAnalysisRadius;
+
     private boolean resourcePackEnabled;
     private String resourcePackIp;
     private int resourcePackPort;
@@ -62,6 +75,19 @@ public final class AirBrushConfig {
         eraserMinRadius = source.getDouble("eraser.min-radius", 0.125);
         eraserMaxRadius = source.getDouble("eraser.max-radius", 4.0);
         eraserRadiusStep = source.getDouble("eraser.radius-step", 0.125);
+
+        markerTtlSeconds = source.getInt("marker.ttl-seconds", 60);
+        markerFadeSeconds = source.getInt("marker.fade-seconds", 10);
+        markerWidth = (float) source.getDouble("marker.width", 0.02);
+        markerBlocksPerDurability = source.getDouble("marker.blocks-per-durability", 0.25);
+
+        cauldronChargePerDip = source.getInt("cauldron.charge-per-dip", 50);
+        cauldronClothChargePerDip = source.getInt("cauldron.cloth-charge-per-dip", 50);
+        clothBlocksPerDurability = source.getDouble("cloth.blocks-per-durability", 0.15);
+
+        glyphMinRadius = source.getDouble("glyph.min-radius", 0.6);
+        glyphMaxRadius = source.getDouble("glyph.max-radius", 4.0);
+        glyphAnalysisRadius = source.getDouble("glyph.analysis-radius", 8.0);
 
         resourcePackEnabled = source.getBoolean("resource-pack.enabled", true);
         resourcePackIp = source.getString("resource-pack.ip", "127.0.0.1");
@@ -110,6 +136,46 @@ public final class AirBrushConfig {
 
     public double eraserRadiusStep() {
         return eraserRadiusStep;
+    }
+
+    public int markerTtlSeconds() {
+        return markerTtlSeconds;
+    }
+
+    public int markerFadeSeconds() {
+        return markerFadeSeconds;
+    }
+
+    public float markerWidth() {
+        return markerWidth;
+    }
+
+    public double markerBlocksPerDurability() {
+        return markerBlocksPerDurability;
+    }
+
+    public int cauldronChargePerDip() {
+        return cauldronChargePerDip;
+    }
+
+    public int cauldronClothChargePerDip() {
+        return cauldronClothChargePerDip;
+    }
+
+    public double clothBlocksPerDurability() {
+        return clothBlocksPerDurability;
+    }
+
+    public double glyphMinRadius() {
+        return glyphMinRadius;
+    }
+
+    public double glyphMaxRadius() {
+        return glyphMaxRadius;
+    }
+
+    public double glyphAnalysisRadius() {
+        return glyphAnalysisRadius;
     }
 
     public boolean resourcePackEnabled() {

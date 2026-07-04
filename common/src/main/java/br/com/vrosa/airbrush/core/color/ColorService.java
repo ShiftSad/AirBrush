@@ -2,6 +2,7 @@ package br.com.vrosa.airbrush.core.color;
 
 import br.com.vrosa.airbrush.core.draw.DrawService;
 import br.com.vrosa.airbrush.core.i18n.Messages;
+import br.com.vrosa.airbrush.platform.Permissions;
 import br.com.vrosa.airbrush.platform.Platform;
 import br.com.vrosa.airbrush.platform.Sounds;
 import br.com.vrosa.airbrush.platform.WPlayer;
@@ -35,6 +36,11 @@ public final class ColorService {
     public void rightClick(@NotNull WPlayer player) {
         final var picker = pickers.get(player.uuid());
         if (picker == null) {
+            if (!player.hasPermission(Permissions.TOOLS_USE)) {
+                player.actionBar(Component.text(
+                        Messages.get(player.locale(), Messages.Key.NO_PERMISSION), NamedTextColor.RED));
+                return;
+            }
             final var closed = closedAt.get(player.uuid());
             if (closed == null || System.currentTimeMillis() - closed >= REOPEN_COOLDOWN_MS) open(player);
             return;
@@ -59,6 +65,12 @@ public final class ColorService {
             picker.despawn();
             closedAt.put(player.uuid(), System.currentTimeMillis());
         }
+    }
+
+    public void remove(@NotNull WPlayer player) {
+        final var picker = pickers.remove(player.uuid());
+        if (picker != null) picker.despawn();
+        closedAt.remove(player.uuid());
     }
 
     public void tick(@NotNull WPlayer player) {

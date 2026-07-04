@@ -1,0 +1,22 @@
+/* Glyph diagrams ------------------------------------------------------- */
+
+.glyph-grid img {
+  display: block;
+  margin: 0 auto 0.4rem;
+  width: 120px;
+  height: 120px;
+}
+
+/* Center the title row of each glyph card */
+.glyph-grid.grid.cards > ul > li > p:first-child,
+.glyph-grid.grid.cards > ul > li > .admonition {
+  text-align: center;
+}
+
+.glyph-grid.grid.cards > ul > li {
+  text-align: center;
+}
+
+.glyph-grid.grid.cards > ul > li > hr {
+  margin: 0.6rem 0;
+}

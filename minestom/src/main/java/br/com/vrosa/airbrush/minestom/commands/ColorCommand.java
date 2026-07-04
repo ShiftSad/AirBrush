@@ -20,8 +20,8 @@ public final class ColorCommand extends Command {
     public ColorCommand(@NotNull DrawService service) {
         super("color");
 
-        final var cor = ArgumentType.Word("cor");
-        addSyntax((sender, ctx) -> execute(sender, service, ctx.get(cor)), cor);
+        final var color = ArgumentType.Word("color");
+        addSyntax((sender, ctx) -> execute(sender, service, ctx.get(color)), color);
     }
 
     private static void execute(@NotNull CommandSender sender, @NotNull DrawService service, @NotNull String raw) {

@@ -3,6 +3,7 @@ package br.com.vrosa.airbrush.paper.commands;
 import br.com.vrosa.airbrush.core.draw.DrawService;
 import br.com.vrosa.airbrush.core.i18n.Messages;
 import br.com.vrosa.airbrush.paper.platform.BukkitPlayer;
+import br.com.vrosa.airbrush.platform.Permissions;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -27,7 +28,8 @@ public final class ColorCommand {
 
     public static @NotNull LiteralCommandNode<CommandSourceStack> build(@NotNull DrawService service) {
         return Commands.literal("color")
-                .then(Commands.argument("cor", StringArgumentType.word())
+                .requires(source -> source.getSender().hasPermission(Permissions.COLOR))
+                .then(Commands.argument("color", StringArgumentType.word())
                         .suggests(ColorCommand::suggest)
                         .executes(ctx -> apply(ctx, service)))
                 .build();
@@ -40,7 +42,7 @@ public final class ColorCommand {
         }
 
         final var locale = player.locale();
-        final var rgb = parse(StringArgumentType.getString(ctx, "cor"));
+        final var rgb = parse(StringArgumentType.getString(ctx, "color"));
         if (rgb == null) {
             player.sendMessage(Component.text(Messages.get(locale, Messages.Key.COLOR_INVALID), NamedTextColor.RED));
             return 0;

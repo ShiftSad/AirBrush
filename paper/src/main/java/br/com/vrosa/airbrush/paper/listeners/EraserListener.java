@@ -25,7 +25,8 @@ public final class EraserListener implements Listener {
     @EventHandler
     public void onInteract(@NotNull PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
-        if (ItemFactory.toolOf(event.getItem()) != ToolType.ERASER) return;
+        final var tool = ItemFactory.toolOf(event.getItem());
+        if (tool != ToolType.ERASER && tool != ToolType.CLOTH) return;
 
         final var action = event.getAction();
         final boolean right = action == RIGHT_CLICK_AIR || action == RIGHT_CLICK_BLOCK;
@@ -46,7 +47,8 @@ public final class EraserListener implements Listener {
         if (!player.isSneaking()) return;
 
         final var held = player.getInventory().getItem(event.getPreviousSlot());
-        if (ItemFactory.toolOf(held) != ToolType.ERASER) return;
+        final var tool = ItemFactory.toolOf(held);
+        if (tool != ToolType.ERASER && tool != ToolType.CLOTH) return;
 
         event.setCancelled(true);
         service.changeRadius(BukkitPlayer.of(player), Hotbar.scrollDirection(event.getPreviousSlot(), event.getNewSlot()));

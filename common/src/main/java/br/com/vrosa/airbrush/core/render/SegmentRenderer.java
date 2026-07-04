@@ -22,8 +22,19 @@ public final class SegmentRenderer {
         this.config = config;
     }
 
-    public @NotNull SegmentHandle spawn(@NotNull WorldRef world, @NotNull Vec3 at, boolean persistent, int rgb, boolean bright) {
-        return platform.spawnSegment(world, at, rgb, persistent, bright);
+    public @NotNull SegmentHandle spawn(@NotNull Pose at, boolean persistent, int rgb, boolean bright) {
+        final var display = platform.spawnSegment(at.world(), at.position(), rgb, persistent, bright);
+        display.anchor(anchorOf(at));
+        return display;
+    }
+
+    /** Block right behind the surface the pose sits on (block coords). */
+    private static @NotNull Vec3 anchorOf(@NotNull Pose pose) {
+        final var normal = pose.normal();
+        return new Vec3(
+                Math.floor(pose.position().x() - normal.x * 0.25),
+                Math.floor(pose.position().y() - normal.y * 0.25),
+                Math.floor(pose.position().z() - normal.z * 0.25));
     }
 
     public void orient(@NotNull SegmentHandle display, @NotNull Pose from, @NotNull Vec3 to, float width) {
@@ -34,17 +45,13 @@ public final class SegmentRenderer {
         display.setTransform(Transform.empty());
     }
 
-    public void drawPermanent(@NotNull Pose from, @NotNull Vec3 to, int rgb,
-                              @NotNull UUID strokeId, @NotNull UUID segmentId, float width) {
-        draw(from, to, rgb, strokeId, segmentId, width, true, false);
-    }
-
     public @NotNull SegmentHandle draw(@NotNull Pose from, @NotNull Vec3 to, int rgb,
                                        @NotNull UUID strokeId, @NotNull UUID segmentId, float width,
                                        boolean persistent, boolean bright) {
         final var display = platform.spawnSegment(from.world(), from.position(), rgb, persistent, bright);
         display.setTransform(transform(from.position(), to, from.normal(), width));
         display.tag(strokeId, segmentId, rgb);
+        display.anchor(anchorOf(from));
         return display;
     }
 

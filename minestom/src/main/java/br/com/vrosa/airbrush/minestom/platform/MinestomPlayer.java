@@ -1,6 +1,8 @@
 package br.com.vrosa.airbrush.minestom.platform;
 
 import br.com.vrosa.airbrush.minestom.item.MinestomItems;
+import br.com.vrosa.airbrush.minestom.item.Tags;
+import br.com.vrosa.airbrush.platform.Cloth;
 import br.com.vrosa.airbrush.platform.ResourcePackPrompt;
 import br.com.vrosa.airbrush.platform.ToolType;
 import br.com.vrosa.airbrush.platform.Vec3;
@@ -68,6 +70,12 @@ public record MinestomPlayer(@NotNull Player handle) implements WPlayer {
     }
 
     @Override
+    public boolean hasPermission(@NotNull String permission) {
+        // The sandbox has no permission plugin; operator level covers everything.
+        return handle.getPermissionLevel() >= 4;
+    }
+
+    @Override
     public @Nullable ToolType heldTool() {
         return MinestomItems.toolOf(handle.getItemInMainHand());
     }
@@ -112,6 +120,98 @@ public record MinestomPlayer(@NotNull Player handle) implements WPlayer {
         final int max = item.get(DataComponents.MAX_DAMAGE, 0);
         if (max <= 0) return 0;
         return Math.max(0, max - item.get(DataComponents.DAMAGE, 0));
+    }
+
+    @Override
+    public void consumeHeldItem() {
+        final var item = handle.getItemInMainHand();
+        handle.setItemInMainHand(item.amount() <= 1 ? ItemStack.AIR : item.withAmount(item.amount() - 1));
+    }
+
+    @Override
+    public int heldToolTier() {
+        final var tier = handle.getItemInMainHand().getTag(Tags.TIER);
+        return tier == null ? 1 : tier;
+    }
+
+    @Override
+    public double heldToolQuality() {
+        final var quality = handle.getItemInMainHand().getTag(Tags.QUALITY);
+        return quality == null ? 1.0 : quality;
+    }
+
+    @Override
+    public @Nullable Double heldToolRadius() {
+        return handle.getItemInMainHand().getTag(Tags.RADIUS);
+    }
+
+    @Override
+    public void setHeldToolRadius(double radius) {
+        final var item = handle.getItemInMainHand();
+        if (item.isAir()) return;
+        handle.setItemInMainHand(item.withTag(Tags.RADIUS, radius));
+    }
+
+    @Override
+    public @Nullable String heldToolInk() {
+        return handle.getItemInMainHand().getTag(Tags.INK);
+    }
+
+    @Override
+    public @Nullable Integer heldToolInkColor() {
+        return handle.getItemInMainHand().getTag(Tags.INK_COLOR);
+    }
+
+    @Override
+    public void setHeldToolInk(@NotNull String inkId, int rgb, @NotNull Component inkLore) {
+        final var item = handle.getItemInMainHand();
+        if (item.isAir()) return;
+
+        // 1st line is the craft quality; the 2nd describes the loaded ink.
+        final var existing = item.get(DataComponents.LORE);
+        final var lines = new java.util.ArrayList<Component>(2);
+        if (existing != null && !existing.isEmpty()) lines.add(existing.getFirst());
+        lines.add(inkLore);
+
+        handle.setItemInMainHand(item.withTag(Tags.INK, inkId).withTag(Tags.INK_COLOR, rgb)
+                .with(DataComponents.LORE, (java.util.List<Component>) lines));
+    }
+
+    @Override
+    public boolean heldClothWet() {
+        return handle.getItemInMainHand().getTag(Tags.SOLVENT) != null;
+    }
+
+    @Override
+    public void setClothWet(@NotNull Component solventLore) {
+        final var item = handle.getItemInMainHand();
+        if (item.isAir()) return;
+
+        final var existing = item.get(DataComponents.LORE);
+        final var lines = new java.util.ArrayList<Component>(2);
+        if (existing != null && !existing.isEmpty()) lines.add(existing.getFirst());
+        lines.add(solventLore);
+
+        handle.setItemInMainHand(item
+                .with(DataComponents.ITEM_MODEL, Tags.NAMESPACE + ":" + Cloth.WET_MODEL)
+                .withTag(Tags.SOLVENT, "solvent")
+                .with(DataComponents.LORE, (java.util.List<Component>) lines));
+    }
+
+    @Override
+    public void setClothDry() {
+        final var item = handle.getItemInMainHand();
+        if (item.isAir()) return;
+
+        final var existing = item.get(DataComponents.LORE);
+        final var lines = existing != null && !existing.isEmpty()
+                ? java.util.List.of(existing.getFirst())
+                : java.util.List.<Component>of();
+
+        handle.setItemInMainHand(item
+                .with(DataComponents.ITEM_MODEL, Tags.NAMESPACE + ":" + Cloth.ID)
+                .withTag(Tags.SOLVENT, null)
+                .with(DataComponents.LORE, (java.util.List<Component>) lines));
     }
 
     @Override

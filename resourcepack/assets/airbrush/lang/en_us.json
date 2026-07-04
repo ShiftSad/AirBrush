@@ -1,4 +1,19 @@
 {
   "item.airbrush.hammer": "Hammer",
-  "item.airbrush.amethyst_dye": "Amethyst Dye"
+  "item.airbrush.amethyst_dye": "Amethyst Dye",
+  "item.airbrush.quill": "Quill",
+  "item.airbrush.quill_gold": "Golden Quill",
+  "item.airbrush.quill_diamond": "Diamond Quill",
+  "item.airbrush.quill_netherite": "Netherite Quill",
+  "item.airbrush.cloth": "Cloth",
+  "airbrush.ink.common": "Common Ink",
+  "airbrush.ink.luminous": "Luminous Ink",
+  "airbrush.ink.amethyst": "Amethyst Ink",
+  "airbrush.ink.indelible": "Indelible Ink",
+  "airbrush.ink.indelible_luminous": "Luminous Indelible Ink",
+  "airbrush.solvent.solvent": "Solvent",
+  "airbrush.quality.crude": "Quality: Crude",
+  "airbrush.quality.decent": "Quality: Decent",
+  "airbrush.quality.good": "Quality: Good",
+  "airbrush.quality.perfect": "Quality: Perfect"
 }

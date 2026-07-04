@@ -25,6 +25,8 @@ public interface WPlayer {
 
     boolean sneaking();
 
+    boolean hasPermission(@NotNull String permission);
+
     @Nullable ToolType heldTool();
 
     boolean holdingAnyTool();
@@ -36,6 +38,33 @@ public interface WPlayer {
     void repairHeldItem(int amount);
 
     int heldItemDurability();
+
+    int heldToolTier();
+
+    /** Craft-glyph quality of the held tool (0-1; 1.0 when absent). */
+    double heldToolQuality();
+
+    /** Stroke radius saved on the held item, or {@code null} if never adjusted. */
+    @Nullable Double heldToolRadius();
+
+    void setHeldToolRadius(double radius);
+
+    /** Ink id loaded in the held item, or {@code null} if never refilled. */
+    @Nullable String heldToolInk();
+
+    @Nullable Integer heldToolInkColor();
+
+    /** Writes the ink onto the item and replaces the 2nd lore line with its description. */
+    void setHeldToolInk(@NotNull String inkId, int rgb, @NotNull Component inkLore);
+
+    boolean heldClothWet();
+
+    /** Soaks the cloth: swaps the model, flags the solvent and refreshes the lore. */
+    void setClothWet(@NotNull Component solventLore);
+
+    void setClothDry();
+
+    void consumeHeldItem();
 
     void actionBar(@NotNull Component message);
 

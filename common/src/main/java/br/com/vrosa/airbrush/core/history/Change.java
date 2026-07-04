@@ -12,23 +12,33 @@ import java.util.UUID;
 
 public sealed interface Change permits Change.Draw, Change.Erase {
 
-    void revert(@NotNull Platform platform);
+    /** Reverts the change and returns how many segments were affected. */
+    int revert(@NotNull Platform platform);
 
     int size();
 
     record Draw(@NotNull WorldRef world, @NotNull Vec3 near, @NotNull UUID strokeId, int size) implements Change {
         @Override
-        public void revert(@NotNull Platform platform) {
+        public int revert(@NotNull Platform platform) {
+            int removed = 0;
             for (final var display : platform.segmentsByStrokes(world, Set.of(strokeId))) {
-                if (display.isValid()) display.remove();
+                if (!display.isValid()) continue;
+                display.remove();
+                removed++;
             }
+            return removed;
         }
     }
 
     record Erase(@NotNull List<SegmentSnapshot> snapshots) implements Change {
         @Override
-        public void revert(@NotNull Platform platform) {
-            for (final var snapshot : snapshots) platform.restore(snapshot);
+        public int revert(@NotNull Platform platform) {
+            int restored = 0;
+            for (final var snapshot : snapshots) {
+                platform.restore(snapshot);
+                restored++;
+            }
+            return restored;
         }
 
         @Override

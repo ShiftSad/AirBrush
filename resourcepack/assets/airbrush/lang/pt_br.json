@@ -1,4 +1,19 @@
 {
   "item.airbrush.hammer": "Martelo",
-  "item.airbrush.amethyst_dye": "Corante de Ametista"
+  "item.airbrush.amethyst_dye": "Corante de Ametista",
+  "item.airbrush.quill": "Pena",
+  "item.airbrush.quill_gold": "Pena Dourada",
+  "item.airbrush.quill_diamond": "Pena de Diamante",
+  "item.airbrush.quill_netherite": "Pena de Netherite",
+  "item.airbrush.cloth": "Pano",
+  "airbrush.ink.common": "Tinta Comum",
+  "airbrush.ink.luminous": "Tinta Luminosa",
+  "airbrush.ink.amethyst": "Tinta de Ametista",
+  "airbrush.ink.indelible": "Tinta Indelével",
+  "airbrush.ink.indelible_luminous": "Tinta Indelével Luminosa",
+  "airbrush.solvent.solvent": "Solvente",
+  "airbrush.quality.crude": "Qualidade: Tosca",
+  "airbrush.quality.decent": "Qualidade: Decente",
+  "airbrush.quality.good": "Qualidade: Boa",
+  "airbrush.quality.perfect": "Qualidade: Perfeita"
 }

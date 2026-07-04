@@ -18,7 +18,7 @@ public final class UndoCommand extends Command {
     public UndoCommand(@NotNull History history) {
         super("undo");
 
-        final var amount = ArgumentType.Integer("quantidade").min(1);
+        final var amount = ArgumentType.Integer("amount").min(1);
         setDefaultExecutor((sender, ctx) -> execute(sender, history, 1));
         addSyntax((sender, ctx) -> execute(sender, history, ctx.get(amount)), amount);
     }

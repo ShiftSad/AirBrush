@@ -5,15 +5,19 @@ import br.com.vrosa.airbrush.core.config.AirBrushConfig;
 import br.com.vrosa.airbrush.core.i18n.Messages;
 import br.com.vrosa.airbrush.core.resourcepack.ResourcePackService;
 import br.com.vrosa.airbrush.minestom.commands.ColorCommand;
+import br.com.vrosa.airbrush.minestom.commands.GlyphTestCommand;
 import br.com.vrosa.airbrush.minestom.commands.ItemCommand;
 import br.com.vrosa.airbrush.minestom.commands.UndoCommand;
 import br.com.vrosa.airbrush.minestom.commands.AirBrushCommand;
 import br.com.vrosa.airbrush.minestom.config.MinestomConfig;
+import br.com.vrosa.airbrush.minestom.item.CauldronMechanic;
 import br.com.vrosa.airbrush.minestom.item.HammerMechanic;
 import br.com.vrosa.airbrush.minestom.item.MinestomItems;
 import br.com.vrosa.airbrush.minestom.platform.MinestomPlatform;
 import br.com.vrosa.airbrush.minestom.platform.MinestomPlayer;
 import br.com.vrosa.airbrush.minestom.platform.MinestomRaycaster;
+import br.com.vrosa.airbrush.minestom.platform.MinestomWorld;
+import br.com.vrosa.airbrush.platform.Vec3;
 import br.com.vrosa.airbrush.platform.Hotbar;
 import br.com.vrosa.airbrush.platform.ToolType;
 import net.minestom.server.Auth;
@@ -64,7 +68,8 @@ public final class AirBrushServer {
         scheduleTick(instance, engine);
 
         server.start("0.0.0.0", 25565);
-        System.out.println("AirBrush Minestom server iniciado em 0.0.0.0:25565");
+        System.getLogger("AirBrush").log(System.Logger.Level.INFO,
+                "AirBrush Minestom server started on 0.0.0.0:25565");
     }
 
     private static void registerEvents(Instance instance, AirBrushEngine engine, ResourcePackService resourcePack) {
@@ -79,6 +84,7 @@ public final class AirBrushServer {
             if (!event.isFirstSpawn()) return;
             final var player = event.getPlayer();
             player.setGameMode(GameMode.CREATIVE);
+            player.setPermissionLevel(4);
             final var wp = MinestomPlayer.of(player);
             resourcePack.apply(wp);
             wp.giveTool(ToolType.PENCIL);
@@ -92,11 +98,14 @@ public final class AirBrushServer {
         });
 
         events.addListener(PlayerUseItemEvent.class, event -> dispatchRight(engine, event.getPlayer()));
-        events.addListener(PlayerBlockInteractEvent.class, event -> dispatchRight(engine, event.getPlayer()));
+        events.addListener(PlayerBlockInteractEvent.class, event -> {
+            if (CauldronMechanic.dip(engine, event)) return;
+            dispatchRight(engine, event.getPlayer());
+        });
 
         events.addListener(PlayerHandAnimationEvent.class, event -> {
             if (event.getHand() != PlayerHand.MAIN) return;
-            if (HammerMechanic.punch(event.getPlayer())) return;
+            if (HammerMechanic.punch(engine, event.getPlayer())) return;
             dispatchLeft(engine, event.getPlayer());
         });
 
@@ -106,6 +115,7 @@ public final class AirBrushServer {
             drop.setPickupDelay(Duration.ofSeconds(2));
             drop.setInstance(event.getInstance(), player.getPosition().add(0, player.getEyeHeight() - 0.3, 0));
             drop.setVelocity(player.getPosition().direction().mul(6));
+            CauldronMechanic.track(drop);
         });
 
         events.addListener(PickupItemEvent.class, event -> {
@@ -122,19 +132,26 @@ public final class AirBrushServer {
                 return;
             }
             HammerMechanic.handleBlockBreak(event.getPlayer(), event.getBlock());
+            final var position = event.getBlockPosition();
+            engine.breakAnchored(new MinestomWorld(event.getInstance()),
+                    new Vec3(position.blockX(), position.blockY(), position.blockZ()));
         });
 
         events.addListener(PlayerChangeHeldSlotEvent.class, event -> {
             final var player = event.getPlayer();
-            if (!player.isSneaking()) return;
+            final var wp = MinestomPlayer.of(player);
+            if (!player.isSneaking()) {
+                engine.drawService().confirmActive(wp);
+                engine.markerService().confirmActive(wp);
+                return;
+            }
 
             final var tool = MinestomItems.toolOf(event.getItemInOldSlot());
             if (tool == null) return;
 
             final int direction = Hotbar.scrollDirection(event.getOldSlot(), event.getNewSlot());
-            final var wp = MinestomPlayer.of(player);
-            if (tool == ToolType.PENCIL) engine.drawService().changeRadius(wp, direction);
-            else if (tool == ToolType.ERASER) engine.eraserService().changeRadius(wp, direction);
+            if (tool == ToolType.PENCIL || tool == ToolType.QUILL) engine.drawService().changeRadius(wp, direction);
+            else if (tool == ToolType.ERASER || tool == ToolType.CLOTH) engine.eraserService().changeRadius(wp, direction);
             event.setCancelled(true);
         });
     }
@@ -144,9 +161,9 @@ public final class AirBrushServer {
         final var tool = wp.heldTool();
         if (tool == null) return;
         switch (tool) {
-            case PENCIL -> engine.drawService().handlePencil(wp, true);
+            case PENCIL, QUILL -> engine.drawService().handlePencil(wp, true);
             case MARKER -> engine.markerService().handleMarker(wp, true);
-            case ERASER -> {
+            case ERASER, CLOTH -> {
                 if (player.isSneaking()) engine.eraserService().cycleMode(wp);
                 else engine.eraserService().toggleErasing(wp);
             }
@@ -159,12 +176,12 @@ public final class AirBrushServer {
         final var tool = wp.heldTool();
         if (tool == null) return;
         switch (tool) {
-            case PENCIL -> engine.drawService().handlePencil(wp, false);
+            case PENCIL, QUILL -> engine.drawService().handlePencil(wp, false);
             case MARKER -> engine.markerService().handleMarker(wp, false);
             case PALETTE -> {
                 if (engine.colorService().isOpen(wp)) engine.colorService().close(wp);
             }
-            case ERASER -> { }
+            case ERASER, CLOTH -> { }
         }
     }
 
@@ -174,6 +191,7 @@ public final class AirBrushServer {
         commands.register(new ItemCommand());
         commands.register(new UndoCommand(engine.history()));
         commands.register(new AirBrushCommand(reload));
+        commands.register(new GlyphTestCommand(engine));
     }
 
     private static void scheduleTick(Instance instance, AirBrushEngine engine) {
@@ -182,6 +200,7 @@ public final class AirBrushServer {
                 engine.tick(MinestomPlayer.of(player));
             }
             engine.tickSegments();
+            CauldronMechanic.tick(engine);
         }).repeat(TaskSchedule.tick(1)).schedule();
     }
 

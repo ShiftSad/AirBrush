@@ -9,6 +9,8 @@ run-task = "3.0.2"
 adventure = "4.17.0"
 joml = "1.10.8"
 annotations = "26.0.1"
+junit = "5.11.4"
+junit-platform = "1.11.4"
 
 minestom = "2026.05.17c-26.1.1"
 
@@ -17,6 +19,8 @@ adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" 
 joml = { module = "org.joml:joml", version.ref = "joml" }
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 minestom = { module = "net.minestom:minestom", version.ref = "minestom" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 
 [plugins]
 paperweight-userdev = { id = "io.papermc.paperweight.userdev", version.ref = "paperweight-userdev" }

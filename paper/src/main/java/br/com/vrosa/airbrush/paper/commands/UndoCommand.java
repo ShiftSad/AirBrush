@@ -3,6 +3,7 @@ package br.com.vrosa.airbrush.paper.commands;
 import br.com.vrosa.airbrush.core.history.History;
 import br.com.vrosa.airbrush.core.i18n.Messages;
 import br.com.vrosa.airbrush.paper.platform.BukkitPlayer;
+import br.com.vrosa.airbrush.platform.Permissions;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -22,9 +23,10 @@ public final class UndoCommand {
 
     public static @NotNull LiteralCommandNode<CommandSourceStack> build(@NotNull History history) {
         return Commands.literal("undo")
+                .requires(source -> source.getSender().hasPermission(Permissions.UNDO))
                 .executes(ctx -> apply(ctx, history, 1))
-                .then(Commands.argument("quantidade", IntegerArgumentType.integer(1))
-                        .executes(ctx -> apply(ctx, history, IntegerArgumentType.getInteger(ctx, "quantidade"))))
+                .then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                        .executes(ctx -> apply(ctx, history, IntegerArgumentType.getInteger(ctx, "amount"))))
                 .build();
     }
 

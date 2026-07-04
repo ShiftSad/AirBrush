@@ -4,6 +4,7 @@ import br.com.vrosa.airbrush.core.i18n.Messages;
 import br.com.vrosa.airbrush.minestom.item.MinestomItems;
 import br.com.vrosa.airbrush.minestom.platform.MinestomPlayer;
 import br.com.vrosa.airbrush.platform.Hammer;
+import br.com.vrosa.airbrush.platform.Quill;
 import br.com.vrosa.airbrush.platform.ToolType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -20,7 +21,9 @@ public final class ItemCommand extends Command {
     public ItemCommand() {
         super("drawitem");
 
-        final var item = ArgumentType.Word("item").from("pencil", "eraser", "palette", "amethyst_dye", "hammer");
+        final var item = ArgumentType.Word("item")
+                .from("pencil", "eraser", "palette", "amethyst_dye", "hammer", "cloth",
+                        "quill", "quill_gold", "quill_diamond", "quill_netherite");
         addSyntax((sender, ctx) -> execute(sender, ctx.get(item)), item);
     }
 
@@ -29,11 +32,17 @@ public final class ItemCommand extends Command {
             sender.sendMessage(Component.text(Messages.get(Locale.US, Messages.Key.PLAYERS_ONLY), NamedTextColor.RED));
             return;
         }
+        if (player.getPermissionLevel() < 4) {
+            sender.sendMessage(Component.text(Messages.get(Locale.US, Messages.Key.NO_PERMISSION), NamedTextColor.RED));
+            return;
+        }
 
         final var wp = MinestomPlayer.of(player);
         final var normalized = id.toLowerCase(Locale.ROOT);
         final var tool = ToolType.byId(normalized);
-        if (tool != null) {
+        if (Quill.isQuillId(normalized)) {
+            player.getInventory().addItemStack(MinestomItems.quill(Quill.tierOf(normalized), 1.0));
+        } else if (tool != null) {
             wp.giveTool(tool);
         } else if (Hammer.ID.equals(normalized)) {
             player.getInventory().addItemStack(MinestomItems.hammer());

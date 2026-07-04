@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Rays modifier">
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+    <circle cx="100" cy="100" r="70" stroke="#9b7dff" stroke-width="5"/>
+    <g stroke="#d6a4ff" stroke-width="5">
+      <line x1="172" y1="100" x2="188" y2="100"/>
+      <line x1="151" y1="151" x2="162" y2="162"/>
+      <line x1="100" y1="172" x2="100" y2="188"/>
+      <line x1="49" y1="151" x2="38" y2="162"/>
+      <line x1="28" y1="100" x2="12" y2="100"/>
+      <line x1="49" y1="49" x2="38" y2="38"/>
+      <line x1="100" y1="28" x2="100" y2="12"/>
+      <line x1="151" y1="49" x2="162" y2="38"/>
+    </g>
+  </g>
+</svg>

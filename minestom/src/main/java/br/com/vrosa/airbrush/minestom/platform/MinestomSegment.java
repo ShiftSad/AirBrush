@@ -63,6 +63,24 @@ public final class MinestomSegment implements SegmentHandle {
     }
 
     @Override
+    public void anchor(@NotNull Vec3 block) {
+        entity.setTag(Tags.SEGMENT_ANCHOR, (int) block.x() + "_" + (int) block.y() + "_" + (int) block.z());
+    }
+
+    @Override
+    public @Nullable Vec3 anchorBlock() {
+        final var raw = entity.getTag(Tags.SEGMENT_ANCHOR);
+        if (raw == null) return null;
+        final var parts = raw.split("_");
+        if (parts.length != 3) return null;
+        try {
+            return new Vec3(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    @Override
     public @Nullable UUID strokeId() {
         final var raw = entity.getTag(Tags.STROKE_ID);
         return raw == null ? null : UUID.fromString(raw);
@@ -90,6 +108,10 @@ public final class MinestomSegment implements SegmentHandle {
                 DisplayMetas.read((AbstractDisplayMeta) entity.getEntityMeta()),
                 stroke == null ? UUID.randomUUID() : stroke,
                 segment == null ? UUID.randomUUID() : segment,
-                color());
+                color(),
+                // The sandbox never persists entities; the flag only matters on Paper.
+                true,
+                Boolean.TRUE.equals(entity.getTag(Tags.SEGMENT_BRIGHT)),
+                anchorBlock());
     }
 }

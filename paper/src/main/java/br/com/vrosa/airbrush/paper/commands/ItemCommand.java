@@ -4,6 +4,8 @@ import br.com.vrosa.airbrush.core.i18n.Messages;
 import br.com.vrosa.airbrush.paper.item.ItemFactory;
 import br.com.vrosa.airbrush.paper.platform.BukkitPlayer;
 import br.com.vrosa.airbrush.platform.Hammer;
+import br.com.vrosa.airbrush.platform.Permissions;
+import br.com.vrosa.airbrush.platform.Quill;
 import br.com.vrosa.airbrush.platform.ToolType;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -27,6 +29,7 @@ public final class ItemCommand {
 
     public static @NotNull LiteralCommandNode<CommandSourceStack> build() {
         return Commands.literal("drawitem")
+                .requires(source -> source.getSender().hasPermission(Permissions.DRAWITEM))
                 .then(Commands.argument("item", StringArgumentType.word())
                         .suggests(ItemCommand::suggest)
                         .executes(ItemCommand::apply))
@@ -34,6 +37,11 @@ public final class ItemCommand {
     }
 
     private static int apply(@NotNull CommandContext<CommandSourceStack> context) {
+        if (!context.getSource().getSender().hasPermission(Permissions.DRAWITEM)) {
+            context.getSource().getSender().sendMessage(Component.text(
+                    Messages.get(Locale.US, Messages.Key.NO_PERMISSION), NamedTextColor.RED));
+            return 0;
+        }
         if (!(context.getSource().getSender() instanceof Player player)) {
             context.getSource().getSender().sendMessage(Component.text(Messages.get(Locale.US, Messages.Key.PLAYERS_ONLY), NamedTextColor.RED));
             return 0;
@@ -42,7 +50,9 @@ public final class ItemCommand {
         final var locale = player.locale();
         final var id = StringArgumentType.getString(context, "item").toLowerCase(Locale.ROOT);
         final var tool = ToolType.byId(id);
-        if (tool != null) {
+        if (Quill.isQuillId(id)) {
+            player.getInventory().addItem(ItemFactory.quill(Quill.tierOf(id), 1.0));
+        } else if (tool != null) {
             BukkitPlayer.of(player).giveTool(tool);
         } else if (Hammer.ID.equals(id)) {
             player.getInventory().addItem(ItemFactory.hammer());
@@ -59,7 +69,10 @@ public final class ItemCommand {
             @NotNull CommandContext<CommandSourceStack> context, @NotNull SuggestionsBuilder builder) {
         final var input = builder.getRemaining().toLowerCase(Locale.ROOT);
         for (final var tool : ToolType.values()) {
-            if (tool.id().startsWith(input)) builder.suggest(tool.id());
+            if (tool != ToolType.QUILL && tool.id().startsWith(input)) builder.suggest(tool.id());
+        }
+        for (int tier = 1; tier <= Quill.TIERS; tier++) {
+            if (Quill.idOf(tier).startsWith(input)) builder.suggest(Quill.idOf(tier));
         }
         if (Hammer.ID.startsWith(input)) builder.suggest(Hammer.ID);
         return builder.buildFuture();

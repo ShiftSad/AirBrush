@@ -29,11 +29,14 @@ public final class History {
 
         int undoneChanges = 0;
         int undoneSegments = 0;
-        for (int i = 0; i < count && !stack.isEmpty(); i++) {
+        int remaining = count;
+        while (remaining > 0 && !stack.isEmpty()) {
             final var change = stack.pop();
-            change.revert(platform);
+            final int affected = change.revert(platform);
+            if (affected <= 0) continue;
             undoneChanges++;
-            undoneSegments += change.size();
+            undoneSegments += affected;
+            remaining--;
         }
         return new Result(undoneChanges, undoneSegments);
     }

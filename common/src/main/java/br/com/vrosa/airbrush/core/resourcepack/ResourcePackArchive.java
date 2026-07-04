@@ -17,7 +17,7 @@ public record ResourcePackArchive(byte @NotNull [] bytes, @NotNull String sha1, 
         final byte[] bytes;
         try (var in = ResourcePackArchive.class.getResourceAsStream(RESOURCE)) {
             if (in == null) {
-                throw new IllegalStateException("Resource pack ausente no classpath: " + RESOURCE);
+                throw new IllegalStateException("Resource pack missing from classpath: " + RESOURCE);
             }
             bytes = in.readAllBytes();
         } catch (IOException e) {

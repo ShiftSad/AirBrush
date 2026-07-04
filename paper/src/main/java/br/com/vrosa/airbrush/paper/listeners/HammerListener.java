@@ -1,6 +1,11 @@
 package br.com.vrosa.airbrush.paper.listeners;
 
+import br.com.vrosa.airbrush.core.AirBrushEngine;
+import br.com.vrosa.airbrush.core.i18n.Messages;
 import br.com.vrosa.airbrush.paper.item.ItemFactory;
+import br.com.vrosa.airbrush.paper.platform.BukkitPlayer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -27,7 +32,12 @@ public final class HammerListener implements Listener {
     private static final double RAY_SIZE = 0.2;
     private static final int DEBOUNCE_TICKS = 2;
 
+    private final AirBrushEngine engine;
     private final Map<UUID, Integer> lastTransform = new HashMap<>();
+
+    public HammerListener(@NotNull AirBrushEngine engine) {
+        this.engine = engine;
+    }
 
     @EventHandler
     public void onPunch(@NotNull PlayerInteractEvent event) {
@@ -40,15 +50,26 @@ public final class HammerListener implements Listener {
         final var hammer = player.getInventory().getItemInMainHand();
         if (!ItemFactory.isHammer(hammer)) return;
 
+        final int tick = Bukkit.getCurrentTick();
+        final boolean debounced = tick - lastTransform.getOrDefault(player.getUniqueId(), -DEBOUNCE_TICKS) < DEBOUNCE_TICKS;
+
+        final var wp = BukkitPlayer.of(player);
+        final var pointer = engine.raycaster().cast(wp);
+        if (pointer != null && !debounced && engine.glyphCraft().attempt(pointer)) {
+            event.setCancelled(true);
+            lastTransform.put(player.getUniqueId(), tick);
+            wp.actionBar(Component.text(
+                    Messages.get(player.locale(), Messages.Key.GLYPH_CRAFT_SUCCESS), NamedTextColor.GREEN));
+            return;
+        }
+
         final var eye = player.getEyeLocation();
         final var hit = player.getWorld().rayTraceEntities(eye, eye.getDirection(), REACH, RAY_SIZE,
                 entity -> entity instanceof Item drop && drop.getItemStack().getType() == Material.AMETHYST_SHARD);
         if (hit == null || !(hit.getHitEntity() instanceof Item drop)) return;
 
         event.setCancelled(true);
-
-        final int tick = Bukkit.getCurrentTick();
-        if (tick - lastTransform.getOrDefault(player.getUniqueId(), -DEBOUNCE_TICKS) < DEBOUNCE_TICKS) return;
+        if (debounced) return;
 
         if (transmute(player, hammer, drop)) lastTransform.put(player.getUniqueId(), tick);
     }

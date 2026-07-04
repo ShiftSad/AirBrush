@@ -10,7 +10,9 @@ public enum ToolType {
     PENCIL("pencil", NamedTextColor.YELLOW),
     ERASER("eraser", NamedTextColor.GRAY),
     PALETTE("palette", TextColor.color(0x55FFFF)),
-    MARKER(AmethystDye.ID, TextColor.color(0xB784E0));
+    MARKER(AmethystDye.ID, TextColor.color(0xB784E0)),
+    QUILL(Quill.ID, TextColor.color(0xE8D9A0)),
+    CLOTH(Cloth.ID, TextColor.color(0xD8D8D0));
 
     private final String id;
     private final TextColor color;
@@ -33,6 +35,7 @@ public enum ToolType {
         for (final var tool : values()) {
             if (tool.id.equals(id)) return tool;
         }
-        return null;
+        // Quills have one item id per tier (quill_gold, ...), all the same tool.
+        return Quill.isQuillId(id) ? QUILL : null;
     }
 }

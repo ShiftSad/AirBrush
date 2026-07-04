@@ -21,6 +21,11 @@ public interface SegmentHandle {
 
     void tag(@NotNull UUID strokeId, @NotNull UUID segmentId, int rgb);
 
+    /** Marks the block (block coords) this segment is drawn on; breaking it removes the segment. */
+    void anchor(@NotNull Vec3 block);
+
+    @Nullable Vec3 anchorBlock();
+
     @Nullable UUID strokeId();
 
     @Nullable UUID segmentId();

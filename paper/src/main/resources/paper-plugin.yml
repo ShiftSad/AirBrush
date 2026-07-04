@@ -8,3 +8,23 @@ api-version: '1.21.4'
 load: POSTWORLD
 
 authors: [ ShiftSad ]
+
+permissions:
+  airbrush.color:
+    description: Allows using /color
+    default: true
+  airbrush.undo:
+    description: Allows using /undo
+    default: true
+  airbrush.drawitem:
+    description: Gives tools via /drawitem
+    default: op
+  airbrush.tools.use:
+    description: Use the creative tools (pencil, eraser, palette)
+    default: op
+  airbrush.reload:
+    description: Reloads the AirBrush config
+    default: op
+  airbrush.debug:
+    description: Debug commands (glyph test)
+    default: op
