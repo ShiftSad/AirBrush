@@ -22,7 +22,7 @@ public final class ItemCommand extends Command {
         super("drawitem");
 
         final var item = ArgumentType.Word("item")
-                .from("pencil", "eraser", "palette", "amethyst_dye", "hammer", "cloth",
+                .from("kit", "pencil", "eraser", "palette", "amethyst_dye", "hammer", "cloth",
                         "quill", "quill_gold", "quill_diamond", "quill_netherite");
         addSyntax((sender, ctx) -> execute(sender, ctx.get(item)), item);
     }
@@ -40,7 +40,11 @@ public final class ItemCommand extends Command {
         final var wp = MinestomPlayer.of(player);
         final var normalized = id.toLowerCase(Locale.ROOT);
         final var tool = ToolType.byId(normalized);
-        if (Quill.isQuillId(normalized)) {
+        if ("kit".equals(normalized)) {
+            wp.giveTool(ToolType.PENCIL);
+            wp.giveTool(ToolType.ERASER);
+            wp.giveTool(ToolType.PALETTE);
+        } else if (Quill.isQuillId(normalized)) {
             player.getInventory().addItemStack(MinestomItems.quill(Quill.tierOf(normalized), 1.0));
         } else if (tool != null) {
             wp.giveTool(tool);

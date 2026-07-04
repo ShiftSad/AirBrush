@@ -80,5 +80,6 @@ the witchcraft loop:
 
 ## Undoing mistakes
 
-[`/undo`](commands.md#undo) reverts your latest strokes — including what you
-just erased.
+Admins can revert any change with [`/undo`](commands.md#undo) (`airbrush.undo`,
+op by default). In survival, mistakes are fixed the survival way: wipe them
+with the [cloth](inks.md#solvent), or wait for non-permanent ink to fade.

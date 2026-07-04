@@ -25,6 +25,9 @@ import java.util.concurrent.CompletableFuture;
 
 public final class ItemCommand {
 
+    /** Hands out the three creative tools at once. */
+    private static final String KIT_ID = "kit";
+
     private ItemCommand() {}
 
     public static @NotNull LiteralCommandNode<CommandSourceStack> build() {
@@ -50,7 +53,12 @@ public final class ItemCommand {
         final var locale = player.locale();
         final var id = StringArgumentType.getString(context, "item").toLowerCase(Locale.ROOT);
         final var tool = ToolType.byId(id);
-        if (Quill.isQuillId(id)) {
+        if (KIT_ID.equals(id)) {
+            final var wp = BukkitPlayer.of(player);
+            wp.giveTool(ToolType.PENCIL);
+            wp.giveTool(ToolType.ERASER);
+            wp.giveTool(ToolType.PALETTE);
+        } else if (Quill.isQuillId(id)) {
             player.getInventory().addItem(ItemFactory.quill(Quill.tierOf(id), 1.0));
         } else if (tool != null) {
             BukkitPlayer.of(player).giveTool(tool);
@@ -68,6 +76,7 @@ public final class ItemCommand {
     private static CompletableFuture<Suggestions> suggest(
             @NotNull CommandContext<CommandSourceStack> context, @NotNull SuggestionsBuilder builder) {
         final var input = builder.getRemaining().toLowerCase(Locale.ROOT);
+        if (KIT_ID.startsWith(input)) builder.suggest(KIT_ID);
         for (final var tool : ToolType.values()) {
             if (tool != ToolType.QUILL && tool.id().startsWith(input)) builder.suggest(tool.id());
         }

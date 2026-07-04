@@ -5,8 +5,8 @@ explained with examples below.
 
 | Command | Purpose | Permission | Default |
 | --- | --- | --- | --- |
-| `/color <color>` | Set the pencil color | `airbrush.color` | everyone |
-| `/undo [amount]` | Undo your last strokes | `airbrush.undo` | everyone |
+| `/color <color>` | Set the pencil color | `airbrush.color` | op |
+| `/undo [amount]` | Undo your last strokes | `airbrush.undo` | op |
 | `/drawitem <item>` | Give yourself a tool | `airbrush.drawitem` | op |
 | *(pencil, eraser, palette in hand)* | Use the creative tools | `airbrush.tools.use` | op |
 | `/airbrush reload` | Reload config & language | `airbrush.reload` | op |
@@ -29,8 +29,9 @@ The `#` is optional — `/color 1b2a4a` works too. An unknown name or malformed 
 returns an error and leaves your colour unchanged.
 
 !!! note
-    This sets the **pencil** colour. To pick a colour visually, use the **palette**
-    tool instead. Quill colour comes from the ink you dip it in — see
+    This sets the **pencil** colour — an admin tool, hence the op-default
+    `airbrush.color` permission. To pick a colour visually, use the **palette**
+    instead. Quill colour comes from the ink you dip it in — see
     [Inks & cauldrons](inks.md).
 
 ## `/undo`
@@ -45,17 +46,23 @@ number to undo several at once.
 
 The amount must be `1` or greater. If there's nothing left to undo, you'll be told so.
 
+!!! note "Admin tool"
+    `/undo` requires `airbrush.undo` (op by default) and reverts **any** change —
+    pencil, quill and marker strokes, and even erases. Survival players fix
+    mistakes the survival way: with the [cloth](tools.md), or by waiting for
+    non-permanent ink to fade.
+
 ## `/drawitem`
 
 Give yourself one of the AirBrush tools. Requires the `airbrush.drawitem` permission
 (op by default). Valid items:
 
-`pencil` · `eraser` · `palette` · `amethyst_dye` · `hammer` · `cloth` ·
+`kit` · `pencil` · `eraser` · `palette` · `amethyst_dye` · `hammer` · `cloth` ·
 `quill` · `quill_gold` · `quill_diamond` · `quill_netherite`
 
 ```
+/drawitem kit          # pencil + eraser + palette in one go
 /drawitem hammer
-/drawitem quill
 /drawitem quill_netherite
 ```
 

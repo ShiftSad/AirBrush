@@ -11,11 +11,11 @@ authors: [ ShiftSad ]
 
 permissions:
   airbrush.color:
-    description: Allows using /color
-    default: true
+    description: Allows using /color (sets the pencil color)
+    default: op
   airbrush.undo:
-    description: Allows using /undo
-    default: true
+    description: Allows using /undo (reverts any stroke, including quill and marker)
+    default: op
   airbrush.drawitem:
     description: Gives tools via /drawitem
     default: op

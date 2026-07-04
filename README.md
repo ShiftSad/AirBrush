@@ -41,9 +41,7 @@ hosts the resource pack itself over a small built-in HTTP server.
 Grab your tools in-game with `/drawitem`:
 
 ```
-/drawitem pencil
-/drawitem eraser
-/drawitem palette
+/drawitem kit    # pencil + eraser + palette in one go
 ```
 
 ## Controls
@@ -125,9 +123,9 @@ to rewet it.
 
 | Command | What it does | Permission |
 | --- | --- | --- |
-| `/color <name or #RRGGBB>` | Set the pencil color directly | everyone |
-| `/undo [amount]` | Undo your last strokes | everyone |
-| `/drawitem <pencil \| eraser \| palette \| amethyst_dye \| hammer \| cloth \| quill \| quill_gold \| quill_diamond \| quill_netherite>` | Give yourself a tool | `airbrush.drawitem` (op) |
+| `/color <name or #RRGGBB>` | Set the pencil color directly | `airbrush.color` (op) |
+| `/undo [amount]` | Undo your last strokes (any tool) | `airbrush.undo` (op) |
+| `/drawitem <kit \| pencil \| eraser \| palette \| amethyst_dye \| hammer \| cloth \| quill \| quill_gold \| quill_diamond \| quill_netherite>` | Give yourself a tool (`kit` = the three creative tools) | `airbrush.drawitem` (op) |
 | `/glyphtest [particles]` | Analyze nearby glyph strokes (debug) | `airbrush.debug` |
 | `/airbrush reload` | Reload the config and language files | `airbrush.reload` |
 

@@ -22,9 +22,7 @@ Get your tools in-game with `/drawitem` (requires the `airbrush.drawitem`
 permission, op by default):
 
 ```
-/drawitem pencil
-/drawitem eraser
-/drawitem palette
+/drawitem kit    # pencil + eraser + palette in one go
 ```
 
 Once you've got them, head to [Tools & controls](tools.md) to learn the clicks,
